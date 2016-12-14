@@ -55,6 +55,18 @@ class Car:
         self.display_position_coordinate_x = display_position_coordinate_x
         self.display_position_coordinate_y = display_position_coordinate_y
 
+    # ___________Getter___________
+
+    @property
+    def display_position_coordinate_x(self):
+        """I'm the display position coordinate x"""
+        return self.display_position_coordinate_x
+
+    @property
+    def display_position_coordinate_y(self):
+        """I'm the display position coordinate y"""
+        return self.display_position_coordinate_y
+
     def move_car_on_event_keypress_direction_arrows(self, event):
         # Is there a key press at all?
         if event.type == pygame.KEYDOWN:
@@ -104,7 +116,10 @@ def game_loop():
 
         # Displays an image of a car at screen position (x, y) 
         car.draw_car()
-                            
+
+        if car.display_position_coordinate_x > display_width or car.display_position_coordinate_x < 0:
+            game_exit = True
+
         # Updates the main window
         pygame.display.update()
         
