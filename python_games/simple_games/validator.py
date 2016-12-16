@@ -1,4 +1,4 @@
-# This class will handle different kinds of user input and validate it
+"""This self written python module will handle different kinds of user input and validate it"""
 
 # This is a module for regular expressions see python documentation "Regular expression operations"
 import re

@@ -1,5 +1,10 @@
 import unittest
 
+# Will import the absolute system path to directory simple_games where the validator module is located
+# Otherwise this test module could not import the validator to test
+import sys
+sys.path.insert(0, '/home/thilo/Python/python_games/simple_games')
+
 # Imports the self written python module validator
 import validator
 
