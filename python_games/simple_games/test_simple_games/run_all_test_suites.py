@@ -1,15 +1,18 @@
 import unittest
-import test_validator
-import test_tictactoe
 
-# Returns the test suite of the test_validator 
+from python_games.simple_games.test_simple_games import test_validator
+from python_games.simple_games.test_simple_games import test_tictactoe
+
+# import test_tictactoe
+
+# Returns the test suite of the test_validator
 validator_suite = test_validator.suite()
 
 # Returns the test suite of the test_tictactoe
-tictactoe_suite = test_tictactoe.suite()
+ticTacToe_suite = test_tictactoe.suite()
 
 # Aggregates all test suites of the system
-alltests = unittest.TestSuite([validator_suite, tictactoe_suite])
+allTests = unittest.TestSuite([validator_suite, ticTacToe_suite])
 
 # Runs the aggregated tests
-unittest.TextTestRunner(verbosity=2).run(alltests)
+unittest.TextTestRunner(verbosity=2).run(allTests)
