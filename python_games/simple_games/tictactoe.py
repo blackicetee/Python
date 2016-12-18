@@ -1,11 +1,16 @@
 import numpy as np
 
 class TicTacToe:
-	"""Represents the game tic-tac-toe and menages the rules, winning- and loosing conditions"""
-	game_matrix = None
-
+	"""Represents the game TicTacToe and menages the rules, winning- and loosing conditions"""
 	def __init__(self, rows, columns):
-		self.game_matrix = self.create_game_matrix_with_zeros(rows, columns)
+		self._rows = rows
+		self._columns = columns
+		self._game_matrix = self.create_game_matrix_with_zeros(rows, columns)
+
+	@property
+	def game_matrix(self):
+		"""Represents the game filed"""
+		return self._game_matrix
 
 	def create_game_matrix_with_zeros(self, rows, columns):
 		return np.asmatrix(np.zeros(shape=(rows, columns)))
@@ -44,7 +49,7 @@ class TicTacToe:
 		2.0 if game_token_type is 'X'."""
 		if game_token_type == 'O':
 			return 1.0
-		else if game_token_type == 'X':
+		elif game_token_type == 'X':
 			return 2.0
 		else:
 			raise ValueError("game_token_type needs to be 'O' or 'X'!")
@@ -59,12 +64,10 @@ class TicTacToe:
 
 		return: True if the position inside the game matrix is free
 		and otherwise it will return False."""
-		if position[0] < self.rows and position[1] < self.columns:
+		if position[0] < self._rows and position[1] < self._columns:
 			if self.game_matrix[position[0], position[1]] == 0.0:
 				return True
 			else:
 				return False
 		else:
 			return False
-
-ttt = TicTacToe(4, 4)
