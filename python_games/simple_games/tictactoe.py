@@ -3,7 +3,40 @@ import numpy as np
 
 class TicTacToe:
     """Represents the game TicTacToe and menages the placement of game tokens on the game matrix,
-     winning- and loosing conditions and resetting game field values"""
+    winning- and loosing conditions and resetting game field values.
+
+    Attributes
+    ----------
+    game_matrix
+    rows :  int
+        Defines how much rows the game_matrix should have.
+    columns :   int
+        Defines how much columns the game_matrix should have.
+
+     Methods
+     --------
+    put_game_token(game_token_type, position)
+        Places a game token with a specified game_token_type at a position on the game_matrix.
+
+    translate_game_token_type(game_token_type)
+        Translates either a single character string 'O' or 'X' into a float value,
+        because of internal game_matrix representation purposes.
+
+    is_position_free(position)
+        Checks if a position on the game_matrix is taken or free.
+        Raises a ValueError exception if the given position is not in range of the game_matrix.
+
+    reset_game_matrix_values()
+        Resets every game_matrix game token value back to 0.0.
+
+    is_horizontal_victory()
+        Checks if any row of the game matrix contains only game tokens from one player,
+        without empty or enemy elements.
+
+    is_vertical_victory()
+        Checks if any column of the game matrix contains only game tokens from one player,
+        without empty or enemy elements.
+     """
 
     def __init__(self, rows, columns):
         self.__game_matrix = np.asmatrix(np.zeros(shape=(rows, columns)))
@@ -12,7 +45,15 @@ class TicTacToe:
 
     @property
     def game_matrix(self):
-        """Represents the game filed"""
+        """A matrix which represents the TicTacToe game field. The game_matrix defines how big the game field is,
+        how much game tokens could be placed and where they could be placed. Additionally the game_matrix
+        stores the position of every placed game token inside the matrix.
+
+        Returns
+        -------
+        game_matrix :   numpy.matrix
+            The game_matrix.
+        """
         return self.__game_matrix
 
     def put_game_token(self, game_token_type, position):
@@ -118,6 +159,7 @@ class TicTacToe:
                 self.game_matrix[row, col] = value
 
     def reset_game_matrix_values(self):
+        """Overwrites every element of the game matrix with 0.0."""
         self.__overwrite_game_matrix_with_values(0.0)
 
     def is_horizontal_victory(self):
