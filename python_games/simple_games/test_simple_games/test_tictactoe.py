@@ -61,21 +61,93 @@ class TestPutGameToken(unittest.TestCase):
 
     def setUp(self):
         self.ticTacToe = TicTacToe(4, 4)
+        self.example_ticTacToe_game = TicTacToe(4, 4)
+        self.example_ticTacToe_game.put_game_token('X', (0, 0))
+        self.example_ticTacToe_game.put_game_token('O', (3, 3))
+        self.example_ticTacToe_game.put_game_token('X', (0, 1))
+        self.example_ticTacToe_game.put_game_token('O', (2, 2))
+        self.example_ticTacToe_game.put_game_token('X', (0, 2))
+        self.example_ticTacToe_game.put_game_token('O', (1, 1))
+        self.example_ticTacToe_game.put_game_token('X', (0, 3))
 
-    def test_fill_game_matrix_with_twos(self):
-        for row in range(4):
-            for col in range(4):
-                self.ticTacToe.put_game_token('X', (row, col))
-
-        matrix_filled_with_twos = \
-            matrix([[2.0, 2.0, 2.0, 2.0],
-                    [2.0, 2.0, 2.0, 2.0],
-                    [2.0, 2.0, 2.0, 2.0],
-                    [2.0, 2.0, 2.0, 2.0]])
-
-        equality_matrix = matrix_filled_with_twos == self.ticTacToe.game_matrix
+    def test_put_seven_game_tokens(self):
+        self.ticTacToe.put_game_token('X', (0, 0))
+        self.ticTacToe.put_game_token('O', (3, 3))
+        self.ticTacToe.put_game_token('X', (0, 1))
+        self.ticTacToe.put_game_token('O', (2, 2))
+        self.ticTacToe.put_game_token('X', (0, 2))
+        self.ticTacToe.put_game_token('O', (1, 1))
+        self.ticTacToe.put_game_token('X', (0, 3))
+        equality_matrix = self.example_ticTacToe_game.game_matrix == self.ticTacToe.game_matrix
         self.assertTrue(equality_matrix.all())
 
+    def test_if_value_not_changes_when_position_is_taken(self):
+        copy_example_ticTacToe_game = self.example_ticTacToe_game
+        copy_example_ticTacToe_game.put_game_token('X', (0, 0))
+        copy_example_ticTacToe_game.put_game_token('O', (3, 3))
+        copy_example_ticTacToe_game.put_game_token('O', (0, 1))
+        copy_example_ticTacToe_game.put_game_token('X', (2, 2))
+        self.assertTrue((copy_example_ticTacToe_game.game_matrix == self.example_ticTacToe_game.game_matrix).all())
+
+    def test_return_value_by_empty_position(self):
+        self.assertTrue(self.ticTacToe.put_game_token('X', (1, 1)))
+
+    def test_return_value_by_taken_position(self):
+        self.ticTacToe.put_game_token('X', (1, 1))
+        self.assertFalse(self.ticTacToe.put_game_token('X', (1, 1)))
+
+
+class TestResetGameMatrix(unittest.TestCase):
+    def test_reset_game_matrix(self):
+        example_ticTacToe_game = TicTacToe(4, 4)
+        example_ticTacToe_game.put_game_token('X', (0, 0))
+        example_ticTacToe_game.put_game_token('O', (3, 3))
+        example_ticTacToe_game.put_game_token('X', (0, 1))
+        example_ticTacToe_game.put_game_token('O', (2, 2))
+        example_ticTacToe_game.put_game_token('X', (0, 2))
+        example_ticTacToe_game.put_game_token('O', (1, 1))
+        example_ticTacToe_game.put_game_token('X', (0, 3))
+        example_ticTacToe_game.reset_game_matrix_values()
+        test_ticTacToe = TicTacToe(4, 4)
+        self.assertTrue((test_ticTacToe.game_matrix == example_ticTacToe_game.game_matrix).all())
+
+
+class TestHorizontalVictory(unittest.TestCase):
+
+    def setUp(self):
+        self.example_ticTacToe_game = TicTacToe(4, 4)
+        self.example_ticTacToe_game.put_game_token('X', (2, 0))
+        self.example_ticTacToe_game.put_game_token('O', (3, 3))
+        self.example_ticTacToe_game.put_game_token('X', (2, 1))
+        self.example_ticTacToe_game.put_game_token('O', (1, 1))
+        self.example_ticTacToe_game.put_game_token('X', (2, 2))
+        self.example_ticTacToe_game.put_game_token('O', (0, 0))
+
+    def test_horizontal_victory(self):
+        self.example_ticTacToe_game.put_game_token('X', (2, 3))
+        self.assertTrue(self.example_ticTacToe_game.is_horizontal_victory())
+
+    def test_no_horizontal_victory(self):
+        self.assertFalse(self.example_ticTacToe_game.is_horizontal_victory())
+
+
+class TestVerticalVictory(unittest.TestCase):
+
+    def setUp(self):
+        self.example_ticTacToe_game = TicTacToe(4, 4)
+        self.example_ticTacToe_game.put_game_token('X', (0, 0))
+        self.example_ticTacToe_game.put_game_token('O', (3, 3))
+        self.example_ticTacToe_game.put_game_token('X', (1, 0))
+        self.example_ticTacToe_game.put_game_token('O', (2, 3))
+        self.example_ticTacToe_game.put_game_token('X', (2, 0))
+        self.example_ticTacToe_game.put_game_token('O', (1, 3))
+
+    def test_vertical_victory(self):
+        self.example_ticTacToe_game.put_game_token('X', (3, 0))
+        self.assertTrue(self.example_ticTacToe_game.is_vertical_victory())
+
+    def test_no_vertical_victory(self):
+        self.assertFalse(self.example_ticTacToe_game.is_vertical_victory())
 
 def suite():
     """Returns an aggregation(called test suite)
@@ -84,4 +156,7 @@ def suite():
     suite2 = unittest.TestLoader().loadTestsFromTestCase(TestTranslateGameTokenType)
     suite3 = unittest.TestLoader().loadTestsFromTestCase(TestIsPositionFree)
     suite4 = unittest.TestLoader().loadTestsFromTestCase(TestPutGameToken)
-    return unittest.TestSuite([suite1, suite2, suite3, suite4])
+    suite5 = unittest.TestLoader().loadTestsFromTestCase(TestResetGameMatrix)
+    suite6 = unittest.TestLoader().loadTestsFromTestCase(TestHorizontalVictory)
+    suite7 = unittest.TestLoader().loadTestsFromTestCase(TestVerticalVictory)
+    return unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6, suite7])
