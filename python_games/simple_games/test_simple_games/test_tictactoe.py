@@ -149,6 +149,35 @@ class TestVerticalVictory(unittest.TestCase):
     def test_no_vertical_victory(self):
         self.assertFalse(self.example_ticTacToe_game.is_vertical_victory())
 
+class TestDiagonalVictory(unittest.TestCase):
+    def setUp(self):
+        self.example_ticTacToe_game = TicTacToe(4, 4)
+        self.example_ticTacToe_game.put_game_token('X', (0, 0))
+        self.example_ticTacToe_game.put_game_token('O', (3, 0))
+        self.example_ticTacToe_game.put_game_token('X', (1, 1))
+        self.example_ticTacToe_game.put_game_token('O', (3, 1))
+        self.example_ticTacToe_game.put_game_token('X', (2, 2))
+        self.example_ticTacToe_game.put_game_token('O', (3, 2))
+
+    def test_diagonal_victory_top_left_to_bottom_right(self):
+        self.example_ticTacToe_game.put_game_token('X', (3, 3))
+        self.assertTrue(self.example_ticTacToe_game.is_diagonal_victory())
+
+    def test_digital_victory_top_right_to_bottom_left(self):
+        example_tictactoe = TicTacToe(4, 4)
+        example_tictactoe.put_game_token('X', (0, 3))
+        example_tictactoe.put_game_token('O', (0, 0))
+        example_tictactoe.put_game_token('X', (1, 2))
+        example_tictactoe.put_game_token('O', (1, 0))
+        example_tictactoe.put_game_token('X', (2, 1))
+        example_tictactoe.put_game_token('O', (2, 0))
+        example_tictactoe.put_game_token('X', (3, 0))
+        self.assertTrue(example_tictactoe.is_diagonal_victory())
+
+    def test_no_digital_victory(self):
+        self.assertFalse(self.example_ticTacToe_game.is_vertical_victory())
+
+
 def suite():
     """Returns an aggregation(called test suite)
     of all test cases in this test module"""
@@ -159,4 +188,5 @@ def suite():
     suite5 = unittest.TestLoader().loadTestsFromTestCase(TestResetGameMatrix)
     suite6 = unittest.TestLoader().loadTestsFromTestCase(TestHorizontalVictory)
     suite7 = unittest.TestLoader().loadTestsFromTestCase(TestVerticalVictory)
-    return unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6, suite7])
+    suite8 = unittest.TestLoader().loadTestsFromTestCase(TestDiagonalVictory)
+    return unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6, suite7, suite8])

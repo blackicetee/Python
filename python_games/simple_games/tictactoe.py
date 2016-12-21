@@ -13,6 +13,11 @@ class TicTacToe:
     columns :   int
         Defines how much columns the game_matrix should have.
 
+    Raises
+    ------
+    ValueError
+        If the attributes rows and columns are not equal.
+
      Methods
      --------
     put_game_token(game_token_type, position)
@@ -39,7 +44,10 @@ class TicTacToe:
      """
 
     def __init__(self, rows, columns):
-        self.__game_matrix = np.asmatrix(np.zeros(shape=(rows, columns)))
+        if rows == columns:
+            self.__game_matrix = np.asmatrix(np.zeros(shape=(rows, columns)))
+        else:
+            raise ValueError("The TicTacToe game matrix needs an equal value for rows and columns!")
         self.__rows = rows
         self.__columns = columns
 
@@ -174,7 +182,8 @@ class TicTacToe:
         horizontal_victory_condition = False
         for row in range(self.__rows):
             if not horizontal_victory_condition:
-                horizontal_victory_condition = self.__check_equality_of_matrix_row(row)
+                horizontal_victory_condition = self.__check_equality_of_list_elements(
+                    self.__game_matrix[row].tolist()[0])
         return horizontal_victory_condition
 
     def is_vertical_victory(self):
@@ -189,45 +198,40 @@ class TicTacToe:
         vertical_victory_condition = False
         for col in range(self.__columns):
             if not vertical_victory_condition:
-                vertical_victory_condition = self.__check_equality_of_matrix_column(col)
+                vertical_victory_condition = self.__check_equality_of_list_elements(
+                    self.__game_matrix.T[col].tolist()[0])
         return vertical_victory_condition
 
-    def __check_equality_of_matrix_row(self, matrix_row):
-        """Checks the equality of all elements inside a specified game matrix row.
+    def is_diagonal_victory(self):
+        """Checks if any diagonal in the game matrix contains only game tokens of one type.
+        A diagonal is a connection between two corners which are not in the same row.
+        For example the connection between the top right corner and the bottom left corner
+        is a valid diagonal of the game matrix.
+        """
+        diagonal_values_top_left_to_bottom_right = []
+        diagonal_values_top_right_to_bottom_left = []
+        for coordinate in range(self.__rows):
+            diagonal_values_top_left_to_bottom_right.append(self.game_matrix[coordinate, coordinate])
+            diagonal_values_top_right_to_bottom_left.append(self.game_matrix[coordinate, (self.__rows - 1) - coordinate])
+        return self.__check_equality_of_list_elements(
+            diagonal_values_top_left_to_bottom_right) or self.__check_equality_of_list_elements(
+            diagonal_values_top_right_to_bottom_left)
+
+    def __check_equality_of_list_elements(self, input_list):
+        """Checks the equality of all elements inside a list.
 
         Parameters
         ----------
-        matrix_row :    int
-            Specifies which row inside of the game matrix should be checked.
+        input_list :    list
+            Elements inside this list are tested for equality.
 
         Returns
         -------
         bool
-            True if there is just one game matrix row in which every element is equal and none of the elements is 0.0.
-            False if no game matrix row contains complete equal elements or one or more elements in one row are 0.0.
+            True if all elements inside the list are equal and unequal zero.
+            False if the elements differ or if zeros occure inside the list.
         """
-        row_list = self.__game_matrix[matrix_row].tolist()[0]
-        if 0.0 not in row_list:
-            return row_list[1:] == row_list[:-1]
+        if 0.0 not in input_list:
+            return input_list[1:] == input_list[:-1]
         else:
             False
-
-    def __check_equality_of_matrix_column(self, matrix_column):
-        """Checks the equality of all elements inside a specified game matrix column.
-
-        Parameters
-        ----------
-        matrix_column :    int
-            Specifies which column inside of the game matrix should be checked.
-
-        Returns
-        -------
-        bool
-            True if there is just one game matrix column in which every element is equal and none of the elements is 0.0.
-            False if no game matrix column contains complete equal elements or one or more elements in one row are 0.0.
-        """
-        column_list = self.__game_matrix.T[matrix_column].tolist()[0]
-        if 0.0 not in column_list:
-            return column_list[1:] == column_list[:-1]
-        else:
-            return False
