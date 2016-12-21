@@ -51,7 +51,6 @@ class TicTacToeGame:
                 self.__request_message_player_move(name_player_two)
                 self.__player_move('O', name_player_two)
 
-            print(game_round)
             game_round += 1
 
         if self.__tictactoe_game.is_victory():
