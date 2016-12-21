@@ -1,7 +1,6 @@
 import unittest
-from numpy import matrix
 from numpy import shape
-import numpy
+
 
 from python_games.simple_games.TicTacToe import TicTacToe
 
@@ -178,6 +177,38 @@ class TestDiagonalVictory(unittest.TestCase):
         self.assertFalse(self.example_ticTacToe_game.is_vertical_victory())
 
 
+class TestVictory(unittest.TestCase):
+        def setUp(self):
+            self.example_ticTacToe_game = TicTacToe(4, 4)
+            self.example_ticTacToe_game.put_game_token('X', (0, 0))
+            self.example_ticTacToe_game.put_game_token('O', (0, 1))
+            self.example_ticTacToe_game.put_game_token('X', (0, 2))
+            self.example_ticTacToe_game.put_game_token('O', (0, 3))
+            self.example_ticTacToe_game.put_game_token('X', (1, 0))
+            self.example_ticTacToe_game.put_game_token('O', (2, 0))
+            self.example_ticTacToe_game.put_game_token('X', (1, 1))
+            self.example_ticTacToe_game.put_game_token('O', (2, 1))
+            self.example_ticTacToe_game.put_game_token('X', (1, 2))
+            self.example_ticTacToe_game.put_game_token('O', (3, 0))
+            self.example_ticTacToe_game.put_game_token('X', (2, 2))
+            self.example_ticTacToe_game.put_game_token('O', (3, 1))
+
+        def test_no_victory(self):
+            self.assertFalse(self.example_ticTacToe_game.is_victory())
+
+        def test_only_horizontal_victory(self):
+            self.example_ticTacToe_game.put_game_token('X', (1, 3))
+            self.assertTrue(self.example_ticTacToe_game.is_victory())
+
+        def test_only_vertical_victory(self):
+            self.example_ticTacToe_game.put_game_token('X', (3, 2))
+            self.assertTrue(self.example_ticTacToe_game.is_victory())
+
+        def test_only_diagonal_victory(self):
+            self.example_ticTacToe_game.put_game_token('X', (3, 3))
+            self.assertTrue(self.example_ticTacToe_game.is_victory())
+
+
 def suite():
     """Returns an aggregation(called test suite)
     of all test cases in this test module"""
@@ -189,4 +220,5 @@ def suite():
     suite6 = unittest.TestLoader().loadTestsFromTestCase(TestHorizontalVictory)
     suite7 = unittest.TestLoader().loadTestsFromTestCase(TestVerticalVictory)
     suite8 = unittest.TestLoader().loadTestsFromTestCase(TestDiagonalVictory)
-    return unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6, suite7, suite8])
+    suite9 = unittest.TestLoader().loadTestsFromTestCase(TestVictory)
+    return unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6, suite7, suite8, suite9])

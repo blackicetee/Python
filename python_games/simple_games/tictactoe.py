@@ -170,6 +170,25 @@ class TicTacToe:
         """Overwrites every element of the game matrix with 0.0."""
         self.__overwrite_game_matrix_with_values(0.0)
 
+    def __check_equality_of_list_elements(self, input_list):
+        """Checks the equality of all elements inside a list.
+
+        Parameters
+        ----------
+        input_list :    list
+            Elements inside this list are tested for equality.
+
+        Returns
+        -------
+        bool
+            True if all elements inside the list are equal and unequal zero.
+            False if the elements differ or if zeros occure inside the list.
+        """
+        if 0.0 not in input_list:
+            return input_list[1:] == input_list[:-1]
+        else:
+            False
+
     def is_horizontal_victory(self):
         """ Checks if any row in the game matrix contains only game tokens of one type.
 
@@ -212,26 +231,22 @@ class TicTacToe:
         diagonal_values_top_right_to_bottom_left = []
         for coordinate in range(self.__rows):
             diagonal_values_top_left_to_bottom_right.append(self.game_matrix[coordinate, coordinate])
-            diagonal_values_top_right_to_bottom_left.append(self.game_matrix[coordinate, (self.__rows - 1) - coordinate])
+            diagonal_values_top_right_to_bottom_left.append(
+                self.game_matrix[coordinate, (self.__rows - 1) - coordinate])
         return self.__check_equality_of_list_elements(
             diagonal_values_top_left_to_bottom_right) or self.__check_equality_of_list_elements(
             diagonal_values_top_right_to_bottom_left)
 
-    def __check_equality_of_list_elements(self, input_list):
-        """Checks the equality of all elements inside a list.
+    def is_victory(self):
+        """Checks if any horizontal, vertical or diagonal line contains only game tokens
+         of one type in the game matrix
 
-        Parameters
-        ----------
-        input_list :    list
-            Elements inside this list are tested for equality.
-
-        Returns
-        -------
-        bool
-            True if all elements inside the list are equal and unequal zero.
-            False if the elements differ or if zeros occure inside the list.
-        """
-        if 0.0 not in input_list:
-            return input_list[1:] == input_list[:-1]
-        else:
-            False
+         Returns
+         -------
+         bool
+            True if any horizontal, vertical or diagonal line inside the matrix, containing only game tokens
+            from one type, is found.
+            False if no horizontal, vertical or diagonal line inside the matrix, containing only game tokens
+            from one type, is found.
+            """
+        return self.is_horizontal_victory() or self.is_vertical_victory() or self.is_diagonal_victory()

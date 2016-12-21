@@ -9,7 +9,7 @@ display_height = 600
 # Reference the path of a race car image
 CAR_IMAGE_NAME = 'transparent_car.png'
 
-# RGB defined variables RED GREEN BLUE(RGB) 
+# RGB defined variables RED GREEN BLUE(RGB)
 # (0, 0, 0) means there is no red no green and no blue
 black = (0, 0, 0)
 # (255, 255, 255) means red green and blue are all at maximum intensity
@@ -57,14 +57,18 @@ class Car:
     def car_image(self):
         return self.__car_image
 
+    @car_image.setter
+    def car_image(self, car_image):
+        self.__car_image = car_image
+
     @property
     def display_position_coordinate_x(self):
         """I'm the display position coordinate x"""
         return self.__display_position_coordinate_x
 
     @display_position_coordinate_x.setter
-    def display_position_coordinate_x(self, display_position_coordinate_x):
-        self.__display_position_coordinate_x = display_position_coordinate_x
+    def display_position_coordinate_x(self, x):
+        self.__display_position_coordinate_x = x
 
     @property
     def display_position_coordinate_y(self):
@@ -72,35 +76,36 @@ class Car:
         return self.__display_position_coordinate_y
 
     @display_position_coordinate_y.setter
-    def display_position_coordinate_y(self, display_position_coordinate_y):
-        self.__display_position_coordinate_y = display_position_coordinate_y
+    def display_position_coordinate_y(self, y):
+        self.__display_position_coordinate_y = y
 
     @property
     def change_display_position_coordinate_x(self):
         return self.__change_display_position_coordinate_x
 
     @change_display_position_coordinate_x.setter
-    def change_display_position_coordinate_x(self, change_display_position_coordinate_x):
-        self.__change_display_position_coordinate_x = change_display_position_coordinate_x
+    def change_display_position_coordinate_x(self, x_change):
+        self.__change_display_position_coordinate_x = x_change
 
     @property
     def change_display_position_coordinate_y(self):
         return self.__change_display_position_coordinate_y
 
-    def change_display_position_coordinate_y(self, change_display_position_coordinate_y):
-        self.__change_display_position_coordinate_y = change_display_position_coordinate_y
+    @change_display_position_coordinate_y.setter
+    def change_display_position_coordinate_y(self, y_change):
+        self.__change_display_position_coordinate_y = y_change
 
     def move_car_on_event_keypress_direction_arrows(self, event):
         # Is there a key press at all?
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                self.change_display_position_coordinate_x = -5
+                self.change_display_position_coordinate_x -= 5
             elif event.key == pygame.K_RIGHT:
-                self.change_display_position_coordinate_x = 5
+                self.change_display_position_coordinate_x += 5
             elif event.key == pygame.K_UP:
-                self.change_display_position_coordinate_y = -5
+                self.change_display_position_coordinate_y -= 5
             elif event.key == pygame.K_DOWN:
-                self.change_display_position_coordinate_y = 5
+                self.change_display_position_coordinate_y += 5
         self.reset_car_movement_after_keypressing(event)
 
     def reset_car_movement_after_keypressing(self, event):
@@ -113,10 +118,8 @@ class Car:
 
     # will draw an image of the car to the main screen
     def draw_car(self):
-        self.display_position_coordinate_x(
-            self.display_position_coordinate_x + self.change_display_position_coordinate_x)
-        self.display_position_coordinate_y(
-            self.display_position_coordinate_y + self.change_display_position_coordinate_y)
+        self.display_position_coordinate_x += self.change_display_position_coordinate_x
+        self.display_position_coordinate_y += self.change_display_position_coordinate_y
         gameDisplay.blit(self.car_image, (self.display_position_coordinate_x, self.display_position_coordinate_y))
 
 
@@ -142,10 +145,10 @@ def game_loop():
 
         # Displays an image of a car at screen position (x, y)
         car.draw_car()
-        """
+
         if car.display_position_coordinate_x > display_width or car.display_position_coordinate_x < 0:
             game_exit = True
-        """
+
         # Updates the main window
         pygame.display.update()
 
