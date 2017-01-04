@@ -113,7 +113,7 @@ class TicTacToeGame:
         my_font = pygame.font.SysFont("monospace", 15)
         label1 = my_font.render('Falsche Tastatureingabe:', True, black)
         label2 = my_font.render('Nur die Tasten 0, 1, 2 und 3 sind erlaubt!', True, black)
-        label3 = my_font.render('Mögliche Beispiele [00, 01, 10, ..., 32, 33]', True, black)
+        label3 = my_font.render('Moegliche Beispiele [00, 01, 10, ..., 32, 33]', True, black)
         gameDisplay.blit(label1, (0, 400))
         gameDisplay.blit(label2, (0, 420))
         gameDisplay.blit(label3, (0, 440))

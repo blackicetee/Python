@@ -144,16 +144,174 @@ class Reversi:
         """Overwrites every element of the game matrix with 0.0."""
         self.__overwrite_game_matrix_with_values(0.0)
 
-    def __suggest_horizontal_move_right(self, initial_token_value, position_of_token, conquer_condition=False):
+    def __suggest_horizontal_move(self, initial_token_value, position_of_token, is_left, is_conquered=False):
+        """Suggests a possible horizontal token move to the left or to the right from an initial token position.
+        The token move is only valid if all conditions are true:
+            -one or more enemy tokens are crossed
+            -token move is still inside the game matrix
+            -a free space is at the end of all crossed enemy tokens
+            -no own token, except the initial token position, is crossed
+        The first free space within the game matrix after all crossed enemy tokens is the suggested position.
+
+        Parameters
+        ----------
+        initial_token_value : float
+            Either 1.0 for a black token or 2.0 for a white token.
+            Defines if it is a black token move or a white one.
+
+        position_of_token : tuple
+            Is a tuple of two integer values.
+            First part of the tupel specifies in which row of the game matrix the token is located
+            and the second part specifies the location of the column.
+
+        is_left : bool
+            True when a move suggestion in the left direction should be found.
+            False when a move suggestion in the right direction should be found.
+
+        is_conquered : bool
+            Is initially false and remains false if no enemy token is crossed.
+            Changes to true if one or more enemy tokens are crossed.
+
+        Returns
+        -------
+        int
+            If a valid token move suggestion is found it returns a value between 0 and 7.
+            The value stands for the column index, where the suggested move is located.
+            It returns -1 if no suggestion is possible.
+        """
         if 8 > position_of_token[1] >= 0:
             token_value = self.game_matrix[position_of_token[0], position_of_token[1]]
-            if token_value == 0.0 and conquer_condition:
+            if token_value == 0.0 and is_conquered:
                 return position_of_token[1]
-            elif token_value == 0.0 and not conquer_condition:
+            elif token_value == 0.0 and not is_conquered:
                 return -1
-            elif token_value == initial_token_value and conquer_condition:
+            elif token_value == initial_token_value and is_conquered:
                 return -1
-            elif token_value == initial_token_value and not conquer_condition:
+            elif token_value == initial_token_value and not is_conquered and not is_left:
+                return self.__suggest_horizontal_move(initial_token_value,
+                                                      (position_of_token[0], position_of_token[1] + 1), False,
+                                                      False)
+            elif token_value != initial_token_value and not is_left:
+                return self.__suggest_horizontal_move(initial_token_value,
+                                                      (position_of_token[0], position_of_token[1] + 1), False,
+                                                      True)
+            elif token_value == initial_token_value and not is_conquered and is_left:
+                return self.__suggest_horizontal_move(initial_token_value,
+                                                      (position_of_token[0], position_of_token[1] - 1), True,
+                                                      False)
+            elif token_value != initial_token_value and is_left:
+                return self.__suggest_horizontal_move(initial_token_value,
+                                                      (position_of_token[0], position_of_token[1] - 1), True,
+                                                      True)
+            else:
+                return -1
+        else:
+            return -1
+
+    def __suggest_vertival_move(self, initial_token_value, position_of_token, is_top, is_conquered=False):
+        """Suggests a possible vertical token move to the top or to the bottom from an initial token position.
+        The token move is only valid if all conditions are true:
+            -one or more enemy tokens are crossed
+            -token move is still inside the game matrix
+            -a free space is at the end of all crossed enemy tokens
+            -no own token, except the initial token position, is crossed
+        The first free space within the game matrix after all crossed enemy tokens is the suggested position.
+
+        Parameters
+        ----------
+        initial_token_value : float
+            Either 1.0 for a black token or 2.0 for a white token.
+            Defines if it is a black token move or a white one.
+
+        position_of_token : tuple
+            Is a tuple of two integer values.
+            First part of the tupel specifies in which row of the game matrix the token is located
+            and the second part specifies the location of the column.
+
+        is_top : bool
+            True when a move suggestion in the upper direction should be found.
+            False when a move suggestion in the lower direction should be found.
+
+        is_conquered : bool
+            Is initially false and remains false if no enemy token is crossed.
+            Changes to true if one or more enemy tokens are crossed.
+
+        Returns
+        -------
+        int
+            If a valid token move suggestion is found it returns a value between 0 and 7.
+            The value stands for the row index, where the suggested move is located.
+            It returns -1 if no suggestion is possible.
+        """
+        if 8 > position_of_token[1] >= 0:
+            token_value = self.game_matrix[position_of_token[0], position_of_token[1]]
+            if token_value == 0.0 and is_conquered:
+                return position_of_token[1]
+            elif token_value == 0.0 and not is_conquered:
+                return -1
+            elif token_value == initial_token_value and is_conquered:
+                return -1
+            elif token_value == initial_token_value and not is_conquered and not is_left:
+                return self.__suggest_horizontal_move(initial_token_value,
+                                                      (position_of_token[0], position_of_token[1] + 1), False,
+                                                      False)
+            elif token_value != initial_token_value and not is_left:
+                return self.__suggest_horizontal_move(initial_token_value,
+                                                      (position_of_token[0], position_of_token[1] + 1), False,
+                                                      True)
+            elif token_value == initial_token_value and not is_conquered and is_left:
+                return self.__suggest_horizontal_move(initial_token_value,
+                                                      (position_of_token[0], position_of_token[1] - 1), True,
+                                                      False)
+            elif token_value != initial_token_value and is_left:
+                return self.__suggest_horizontal_move(initial_token_value,
+                                                      (position_of_token[0], position_of_token[1] - 1), True,
+                                                      True)
+            else:
+                return -1
+        else:
+            return -1
+
+    def __suggest_horizontal_move_right(self, initial_token_value, position_of_token, is_conquered=False):
+        """Suggests a possible horizontal token move to the right from an initial token position.
+        The token move is only valid if all conditions are true:
+            -one or more enemy tokens are crossed
+            -token move is still inside the game matrix
+            -a free space is at the end of all crossed enemy tokens
+            -no own token, except the initial token position, is crossed
+        The first free space within the game matrix after all crossed enemy tokens is the suggested position.
+
+        Parameters
+        ----------
+        initial_token_value : float
+            Either 1.0 for a black token or 2.0 for a white token.
+            Defines if it is a black token move or a white one.
+
+        position_of_token : tuple
+            Is a tuple of two integer values.
+            First part of the tupel specifies in which row of the game matrix the token is located
+            and the second part specifies the location of the column.
+
+        is_conquered : bool
+            Is initially false and remains false if no enemy token is crossed.
+            Changes to true if one or more enemy tokens are crossed.
+
+        Returns
+        -------
+        int
+            If a valid token move suggestion is found it returns a value between 0 and 7.
+            The value stands for the column index, where the suggested move is located.
+            It returns -1 if no suggestion is possible.
+        """
+        if 8 > position_of_token[1] >= 0:
+            token_value = self.game_matrix[position_of_token[0], position_of_token[1]]
+            if token_value == 0.0 and is_conquered:
+                return position_of_token[1]
+            elif token_value == 0.0 and not is_conquered:
+                return -1
+            elif token_value == initial_token_value and is_conquered:
+                return -1
+            elif token_value == initial_token_value and not is_conquered:
                 return self.__suggest_horizontal_move_right(initial_token_value,
                                                             (position_of_token[0], position_of_token[1] + 1), False)
             else:
@@ -162,25 +320,108 @@ class Reversi:
         else:
             return -1
 
-    def __suggest_horizontal_move_left(self, initial_token_value, position_of_token, conquer_condition=False):
+    def __suggest_horizontal_move_left(self, initial_token_value, position_of_token, is_conquered=False):
+        """Suggests a possible horizontal token move to the left from an initial token position.
+        The token move is only valid if all conditions are true:
+            -one or more enemy tokens are crossed
+            -token move is still inside the game matrix
+            -a free space is at the end of all crossed enemy tokens
+            -no own token, except the initial token position, is crossed
+        The first free space within the game matrix after all crossed enemy tokens is the suggested position.
+
+        Parameters
+        ----------
+        initial_token_value : float
+            Either 1.0 for a black token or 2.0 for a white token.
+            Defines if it is a black token move or a white one.
+
+        position_of_token : tuple
+            Is a tuple of two integer values.
+            First part of the tuple specifies in which row of the game matrix the token is located
+            and the second part specifies the column.
+
+        is_conquered : bool
+            Is initially false and remains false if no enemy token is crossed.
+            Changes to true if one or more enemy tokens are crossed.
+
+        Returns
+        -------
+        int
+            If a valid token move suggestion is found it returns a value between 0 and 7.
+            The value stands for the column index, where the suggested move is located.
+            It returns -1 if no suggestion is possible.
+        """
         if 8 > position_of_token[1] >= 0:
             token_value = self.game_matrix[position_of_token[0], position_of_token[1]]
-            if token_value == 0.0 and conquer_condition:
+            if token_value == 0.0 and is_conquered:
                 return position_of_token[1]
-            elif token_value == 0.0 and not conquer_condition:
+            elif token_value == 0.0 and not is_conquered:
                 return -1
-            elif token_value == initial_token_value and conquer_condition:
+            elif token_value == initial_token_value and is_conquered:
                 return -1
-            elif token_value == initial_token_value and not conquer_condition:
+            elif token_value == initial_token_value and not is_conquered:
                 return self.__suggest_horizontal_move_left(initial_token_value,
                                                            (position_of_token[0], position_of_token[1] - 1), False)
             else:
                 return self.__suggest_horizontal_move_left(initial_token_value,
-                                                            (position_of_token[0], position_of_token[1] - 1), True)
+                                                           (position_of_token[0], position_of_token[1] - 1), True)
         else:
             return -1
 
+    def __suggest_horizontal_moves_alternative(self, position_of_token):
+        """Suggests a possible horizontal token move to the left and to the right from an initial token position.
+
+        Parameters
+        ----------
+        position_of_token : tuple
+            Is a tuple of two integer values.
+            First part of the tuple specifies in which row of the game matrix the token is located
+            and the second part specifies the column.
+
+        Returns
+        -------
+        list
+            If no horizontal move suggestion is found then an empty list is returned.
+            If just one horizontal suggestion of one direction is found
+            then a list with one token position tuple is returned.
+            If two horizontal move suggestions are found
+            then a list of two token position tuples is returned.
+            """
+        token_value = self.game_matrix[position_of_token[0], position_of_token[1]]
+        suggestion_horizontal_left = self.__suggest_horizontal_move(token_value,
+                                                                    (position_of_token[0], position_of_token[1]), True)
+        suggestion_horizontal_right = self.__suggest_horizontal_move(token_value,
+                                                                     (position_of_token[0], position_of_token[1]),
+                                                                     False)
+        if suggestion_horizontal_left == -1 and suggestion_horizontal_right == -1:
+            return []
+        elif suggestion_horizontal_left == -1 and suggestion_horizontal_right != -1:
+            return [(position_of_token[0], suggestion_horizontal_right)]
+        elif suggestion_horizontal_left != -1 and suggestion_horizontal_right == -1:
+            return [(position_of_token[0], suggestion_horizontal_left)]
+        else:
+            return [(position_of_token[0], suggestion_horizontal_left),
+                    (position_of_token[0], suggestion_horizontal_right)]
+
     def __suggest_horizontal_moves(self, position_of_token):
+        """Suggests a possible horizontal token move to the left and to the right from an initial token position.
+
+        Parameters
+        ----------
+        position_of_token : tuple
+            Is a tuple of two integer values.
+            First part of the tuple specifies in which row of the game matrix the token is located
+            and the second part specifies the column.
+
+        Returns
+        -------
+        list
+            If no horizontal move suggestion is found then an empty list is returned.
+            If just one horizontal suggestion of one direction is found
+            then a list with one token position tuple is returned.
+            If two horizontal move suggestions are found
+            then a list of two token position tuples is returned.
+            """
         token_value = self.game_matrix[position_of_token[0], position_of_token[1]]
         suggestion_horizontal_left = self.__suggest_horizontal_move_left(token_value,
                                                                          (position_of_token[0], position_of_token[1]))
@@ -197,11 +438,40 @@ class Reversi:
                     (position_of_token[0], suggestion_horizontal_right)]
 
     def __suggest_moves_for_a_token(self, position_of_token):
-        return self.__suggest_horizontal_moves(position_of_token)
+        """Suggests all possible moves for a specified token position.
+
+        Parameters
+        ----------
+        position_of_token : tuple
+            Is a tuple of two integer values.
+            First part of the tuple specifies in which row of the game matrix the token is located
+            and the second part specifies the column.
+
+        Returns
+        -------
+        list
+            A list of all token move suggestions which are found for a specified token position.
+
+        """
+        # return self.__suggest_horizontal_moves(position_of_token)
+        return self.__suggest_horizontal_moves_alternative(position_of_token)
         # self.__suggest_vertical_moves(position_of_token)
         # self.__suggest_diagonal_moves(position_of_token)
 
     def suggest_all_moves(self, game_token_type):
+        """Suggests all possible moves for every token of one color.
+
+        Parameters
+        ----------
+        game_token_type : str
+            Defines for which color the suggestions should be searched.
+            It is either 'B' for black token or 'W' for white token.
+
+        Returns
+        -------
+        list
+            A list of all token move suggestions which are found for every token of one color.
+        """
         suggested_moves = []
         game_token = self.translate_game_token_type(game_token_type)
         for row in range(8):
