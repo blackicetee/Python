@@ -14,10 +14,6 @@ class Reversi:
 
     def __init__(self):
         self.__game_matrix = numpy.asmatrix(numpy.zeros(shape=(8, 8)))
-        self.put_game_token('B', (3, 3))
-        self.put_game_token('B', (4, 4))
-        self.put_game_token('W', (3, 4))
-        self.put_game_token('W', (4, 3))
 
     @property
     def game_matrix(self):
