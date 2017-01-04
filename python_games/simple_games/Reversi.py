@@ -148,36 +148,57 @@ class Reversi:
         """Overwrites every element of the game matrix with 0.0."""
         self.__overwrite_game_matrix_with_values(0.0)
 
-    def __traverse_horizontal_right(self, opponent_token_value, position_of_token, conquer_condition=False):
+    def __suggest_horizontal_move_right(self, initial_token_value, position_of_token, conquer_condition=False):
         if 8 > position_of_token[1] >= 0:
             token_value = self.game_matrix[position_of_token[0], position_of_token[1]]
-            if token_value == 0.0 and conquer_condition == True:
+            if token_value == 0.0 and conquer_condition:
                 return position_of_token[1]
-            elif token_value == 0.0 and conquer_condition == False:
+            elif token_value == 0.0 and not conquer_condition:
                 return -1
-            elif token_value == self.__reverse_game_token_value(opponent_token_value):
+            elif token_value == initial_token_value and conquer_condition:
                 return -1
+            elif token_value == initial_token_value and not conquer_condition:
+                return self.__suggest_horizontal_move_right(initial_token_value,
+                                                            (position_of_token[0], position_of_token[1] + 1), False)
             else:
-                return self.__traverse_horizontal_right(opponent_token_value,
-                                                        (position_of_token[0], position_of_token[1] + 1), True)
+                return self.__suggest_horizontal_move_right(initial_token_value,
+                                                            (position_of_token[0], position_of_token[1] + 1), True)
         else:
             return -1
 
-    def __suggest_horizontal_move_right(self, position_of_token):
-        opponent_token_value = self.__reverse_game_token_value(
-            self.game_matrix[position_of_token[0], position_of_token[1]])
-        column = self.__traverse_horizontal_right(opponent_token_value,
-                                                  (position_of_token[0], position_of_token[1] + 1))
-        if column == -1:
-            return []
+    def __suggest_horizontal_move_left(self, initial_token_value, position_of_token, conquer_condition=False):
+        if 8 > position_of_token[1] >= 0:
+            token_value = self.game_matrix[position_of_token[0], position_of_token[1]]
+            if token_value == 0.0 and conquer_condition:
+                return position_of_token[1]
+            elif token_value == 0.0 and not conquer_condition:
+                return -1
+            elif token_value == initial_token_value and conquer_condition:
+                return -1
+            elif token_value == initial_token_value and not conquer_condition:
+                return self.__suggest_horizontal_move_left(initial_token_value,
+                                                           (position_of_token[0], position_of_token[1] - 1), False)
+            else:
+                return self.__suggest_horizontal_move_left(initial_token_value,
+                                                            (position_of_token[0], position_of_token[1] - 1), True)
         else:
-            return [(position_of_token[0], column)]
-
-    # def __suggest_horizontal_move_left(self, position_of_token):
+            return -1
 
     def __suggest_horizontal_moves(self, position_of_token):
-        return self.__suggest_horizontal_move_right(position_of_token)
-        # self.__suggest_horizontal_move_left(position_of_token)
+        token_value = self.game_matrix[position_of_token[0], position_of_token[1]]
+        suggestion_horizontal_left = self.__suggest_horizontal_move_left(token_value,
+                                                                         (position_of_token[0], position_of_token[1]))
+        suggestion_horizontal_right = self.__suggest_horizontal_move_right(token_value,
+                                                                           (position_of_token[0], position_of_token[1]))
+        if suggestion_horizontal_left == -1 and suggestion_horizontal_right == -1:
+            return []
+        elif suggestion_horizontal_left == -1 and suggestion_horizontal_right != -1:
+            return [(position_of_token[0], suggestion_horizontal_right)]
+        elif suggestion_horizontal_left != -1 and suggestion_horizontal_right == -1:
+            return [(position_of_token[0], suggestion_horizontal_left)]
+        else:
+            return [(position_of_token[0], suggestion_horizontal_left),
+                    (position_of_token[0], suggestion_horizontal_right)]
 
     def __suggest_moves_for_a_token(self, position_of_token):
         return self.__suggest_horizontal_moves(position_of_token)
