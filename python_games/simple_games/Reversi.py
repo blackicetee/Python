@@ -28,6 +28,30 @@ class Reversi:
         """
         return self.__game_matrix
 
+    def game_token_move(self, game_token_type, game_token_position):
+        suggested_moves_set = self.suggest_all_moves(game_token_type)
+        if game_token_position in suggested_moves_set:
+            self.put_game_token(game_token_position, game_token_position)
+            self.__conquer_enemy_game_tokens(game_token_position)
+            return True
+        else:
+            return False
+
+    def __conquer_enemy_game_tokens(self, game_token_position):
+        self.__conquer_horizontal_enemy_tokens(game_token_position)
+        self.__conquer_vertical_enemy_tokens(game_token_position)
+        self.__conquer_diagonal_enemy_tokens(game_token_position)
+
+    def __conquer_horizontal_enemy_tokens(self, game_token_position):
+        pass
+
+    def __conquer_vertical_enemy_tokens(self, game_token_position):
+        pass
+
+    def __conquer_diagonal_enemy_tokens(self, game_token_position):
+        pass
+
+
     def put_game_token(self, game_token_type, position):
         """Puts/places a game token at a specified position on the game matrix.
 
@@ -143,6 +167,67 @@ class Reversi:
     def reset_game_matrix_values(self):
         """Overwrites every element of the game matrix with 0.0."""
         self.__overwrite_game_matrix_with_values(0.0)
+
+    def suggest_all_moves(self, game_token_type):
+        """Suggests all possible moves for every token of one color.
+
+        Parameters
+        ----------
+        game_token_type : str
+            Defines for which color the suggestions should be searched.
+            It is either 'B' for black token or 'W' for white token.
+
+        Returns
+        -------
+        list
+            A sorted set of all token move suggestions which are found for every token of one color.
+            Set means that the positions are unique.
+            The set will be sorted like this [(0, 0), (0, 1), (1, 2) ... (5, 5), (5, 6), (6, 0)].
+        """
+        suggested_moves = []
+        game_token = self.translate_game_token_type(game_token_type)
+        for row in range(8):
+            for col in range(8):
+                if self.game_matrix[row, col] == game_token:
+                    suggested_moves += self.__suggest_moves_for_a_token((row, col))
+        return sorted(sorted(set(suggested_moves), key=lambda tup: tup[1]), key=lambda tup: tup[0])
+
+    def __suggest_moves_for_a_token(self, token_position):
+        """Suggests all possible moves for a specified token position.
+
+        Parameters
+        ----------
+        token_position : tuple
+            Is a tuple of two integer values.
+            First part of the tuple specifies in which row of the game matrix the token is located
+            and the second part specifies the column.
+
+        Returns
+        -------
+        list
+            A list of all token move suggestions which are found for a specified token position.
+
+        """
+        suggestion_horizontal_left = self.__suggest_horizontal_move(token_position, token_position, True)
+        suggestion_horizontal_right = self.__suggest_horizontal_move(token_position, token_position, False)
+        suggestion_vertical_top = self.__suggest_vertical_move(token_position, token_position, True)
+        suggestion_vertical_bottom = self.__suggest_vertical_move(token_position, token_position, False)
+        suggestion_diagonal_top_left = self.__suggest_diagonal_move_from_top_left_to_bottom_right(token_position,
+                                                                                                  token_position, True)
+        suggestion_diagonal_bottom_right = self.__suggest_diagonal_move_from_top_left_to_bottom_right(token_position,
+                                                                                                      token_position,
+                                                                                                      False)
+        suggestion_diagonal_top_right = self.__suggest_diagonal_move_from_top_right_to_bottom_left(token_position,
+                                                                                                   token_position,
+                                                                                                   True)
+        suggestion_diagonal_bottom_left = self.__suggest_diagonal_move_from_top_right_to_bottom_left(token_position,
+                                                                                                     token_position,
+                                                                                                     False)
+        all_suggestions_for_one_token = suggestion_horizontal_left + suggestion_horizontal_right + \
+                                        suggestion_vertical_top + suggestion_vertical_bottom + \
+                                        suggestion_diagonal_top_left + suggestion_diagonal_bottom_right + \
+                                        suggestion_diagonal_top_right + suggestion_diagonal_bottom_left
+        return all_suggestions_for_one_token
 
     def __suggest_horizontal_move(self, initial_token_position, token_position, is_left, is_conquered=False):
         """Suggests a possible horizontal token move to the left or to the right from an initial token position.
@@ -410,61 +495,113 @@ class Reversi:
         else:
             return []
 
-    def __suggest_moves_for_a_token(self, token_position):
-        """Suggests all possible moves for a specified token position.
+    def count_black_game_tokens(self):
+        """Counts black game tokens inside the game matrix.
+
+        Returns
+        -------
+        int
+            The amount of black game tokens."""
+        return self.__iterate_black_game_tokens(0, (0, 0))
+
+    def __iterate_black_game_tokens(self, black_tokens_count, token_position):
+        """Iterates through every element of the game matrix and counts the black tokens.
+
+        Parameters
+        ----------
+        black_tokens_count : int
+            Amount of black game tokens.
+
+        token_position : tuple
+            Token position coordinates.
+
+        Returns
+        -------
+        int
+            Amount of black game tokens."""
+        if token_position[0] == 7 and token_position[1] == 7:
+            if self.__is_black_token(token_position):
+                black_tokens_count += 1
+            return black_tokens_count
+        elif token_position[1] == 7:
+            if self.__is_black_token(token_position):
+                black_tokens_count += 1
+            return self.__iterate_black_game_tokens(black_tokens_count, (token_position[0] + 1, token_position[1] - 7))
+        else:
+            if self.__is_black_token(token_position):
+                black_tokens_count += 1
+            return self.__iterate_black_game_tokens(black_tokens_count, (token_position[0], token_position[1] + 1))
+
+    def __is_black_token(self, token_position):
+        """Checks if a token at a specified token position is a black token.
 
         Parameters
         ----------
         token_position : tuple
-            Is a tuple of two integer values.
-            First part of the tuple specifies in which row of the game matrix the token is located
-            and the second part specifies the column.
+            Token at this token position coordinates should be checked.
 
         Returns
         -------
-        list
-            A list of all token move suggestions which are found for a specified token position.
+        bool
+            True if token is black.
+            False if token is not black."""
+        if self.__game_matrix[token_position] == self.translate_game_token_type('B'):
+            return True
+        else:
+            return False
 
-        """
-        suggestion_horizontal_left = self.__suggest_horizontal_move(token_position, token_position, True)
-        suggestion_horizontal_right = self.__suggest_horizontal_move(token_position, token_position, False)
-        suggestion_vertical_top = self.__suggest_vertical_move(token_position, token_position, True)
-        suggestion_vertical_bottom = self.__suggest_vertical_move(token_position, token_position, False)
-        suggestion_diagonal_top_left = self.__suggest_diagonal_move_from_top_left_to_bottom_right(token_position,
-                                                                                                  token_position, True)
-        suggestion_diagonal_bottom_right = self.__suggest_diagonal_move_from_top_left_to_bottom_right(token_position,
-                                                                                                      token_position,
-                                                                                                      False)
-        suggestion_diagonal_top_right = self.__suggest_diagonal_move_from_top_right_to_bottom_left(token_position,
-                                                                                                   token_position,
-                                                                                                   True)
-        suggestion_diagonal_bottom_left = self.__suggest_diagonal_move_from_top_right_to_bottom_left(token_position,
-                                                                                                     token_position,
-                                                                                                     False)
-        all_suggestions_for_one_token = suggestion_horizontal_left + suggestion_horizontal_right + \
-                                        suggestion_vertical_top + suggestion_vertical_bottom + \
-                                        suggestion_diagonal_top_left + suggestion_diagonal_bottom_right + \
-                                        suggestion_diagonal_top_right + suggestion_diagonal_bottom_left
-        return all_suggestions_for_one_token
+    def count_white_game_tokens(self):
+        """Counts white game tokens inside the game matrix.
 
-    def suggest_all_moves(self, game_token_type):
-        """Suggests all possible moves for every token of one color.
+        Returns
+        -------
+        int
+            The amount of white game tokens."""
+        return self.__iterate_white_game_tokens(0, (0, 0))
+
+    def __iterate_white_game_tokens(self, white_tokens_count, token_position):
+        """Iterates through every element of the game matrix and counts the white tokens.
 
         Parameters
         ----------
-        game_token_type : str
-            Defines for which color the suggestions should be searched.
-            It is either 'B' for black token or 'W' for white token.
+        white_tokens_count : int
+            Amount of white game tokens.
+
+        token_position : tuple
+            Token position coordinates.
 
         Returns
         -------
-        list
-            A list of all token move suggestions which are found for every token of one color.
-        """
-        suggested_moves = []
-        game_token = self.translate_game_token_type(game_token_type)
-        for row in range(8):
-            for col in range(8):
-                if self.game_matrix[row, col] == game_token:
-                    suggested_moves += self.__suggest_moves_for_a_token((row, col))
-        return suggested_moves
+        int
+            Amount of white game tokens."""
+        if token_position[0] == 7 and token_position[1] == 7:
+            if self.__is_white_token(token_position):
+                white_tokens_count += 1
+            return white_tokens_count
+        elif token_position[1] == 7:
+            if self.__is_white_token(token_position):
+                white_tokens_count += 1
+            return self.__iterate_white_game_tokens(white_tokens_count, (token_position[0] + 1, token_position[1] - 7))
+        else:
+            if self.__is_white_token(token_position):
+                white_tokens_count += 1
+            return self.__iterate_white_game_tokens(white_tokens_count, (token_position[0], token_position[1] + 1))
+
+    def __is_white_token(self, token_position):
+        """Checks if a token at a specified token position is a white token.
+
+        Parameters
+        ----------
+        token_position : tuple
+            Token at this token position coordinates should be checked.
+
+        Returns
+        -------
+        bool
+            True if token is white.
+            False if token is not white."""
+        if self.__game_matrix[token_position] == self.translate_game_token_type('W'):
+            return True
+        else:
+            return False
+
