@@ -60,6 +60,7 @@ class ReversiGame:
                 self.__request_message_player_move(name_player_two)
                 self.__player_move('W', name_player_two)
 
+            print(self.__move_suggestions)
             game_round += 1
 
         """
@@ -87,7 +88,7 @@ class ReversiGame:
 
     def draw_move_suggestions(self):
         for move_suggestion in self.__move_suggestions:
-            gameDisplay.blit(self.__grey_suggestion_token, ((move_suggestion[0] + 1) * 50, (move_suggestion[1] + 1) * 50))
+            gameDisplay.blit(self.__grey_suggestion_token, ((move_suggestion[1] + 1) * 50, (move_suggestion[0] + 1) * 50))
             pygame.display.update()
 
     def draw_score(self):
@@ -103,8 +104,8 @@ class ReversiGame:
         pygame.display.update()
 
     def __player_move(self, game_token_type, player):
-        col = self.__is_input_valid()
         row = self.__is_input_valid()
+        col = self.__is_input_valid()
         if not self.__reversi.game_token_move(game_token_type, (row, col)):
             self.__repeat_request_message_player_move(player)
             self.__player_move(game_token_type, player)
@@ -173,11 +174,15 @@ class ReversiGame:
         self.draw_reversi_game_matrix()
         my_font = pygame.font.SysFont("arial", 15)
         label1 = my_font.render(player + ':', True, black)
-        label2 = my_font.render('Die gewaehlte Position ist besetzt!', True, black)
-        label3 = my_font.render('Bitte waehle eine andere Position.', True, black)
+        label2 = my_font.render('Dies ist kein zugelassene Position!', True, black)
+        label3 = my_font.render('Zugelassene Positionen werden durch', True, black)
+        label4 = my_font.render('einen kleinen grauen Kreis makiert.', True, black)
+        label5 = my_font.render('Bitte waehle eine andere Position.', True, black)
         gameDisplay.blit(label1, (451, 210))
         gameDisplay.blit(label2, (451, 230))
         gameDisplay.blit(label3, (451, 250))
+        gameDisplay.blit(label4, (451, 270))
+        gameDisplay.blit(label5, (451, 290))
         pygame.display.update()
 
 

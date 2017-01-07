@@ -68,7 +68,7 @@ class Reversi:
                                                       (current_token_position[0], current_token_position[1] + 1))
 
     def __conquer_every_left_enemy_token(self, initial_token_value, current_token_position):
-        if initial_token_value != self.game_matrix[current_token_position]:
+        if self.__reverse_game_token_value(initial_token_value) == self.game_matrix[current_token_position]:
             self.game_matrix[current_token_position] = initial_token_value
             self.__conquer_every_left_enemy_token(initial_token_value,
                                                   (current_token_position[0], current_token_position[1] + 1))
@@ -85,7 +85,7 @@ class Reversi:
                                                        (current_token_position[0], current_token_position[1] - 1))
 
     def __conquer_every_right_enemy_token(self, initial_token_value, current_token_position):
-        if initial_token_value != self.game_matrix[current_token_position]:
+        if self.__reverse_game_token_value(initial_token_value) == self.game_matrix[current_token_position]:
             self.game_matrix[current_token_position] = initial_token_value
             self.__conquer_every_right_enemy_token(initial_token_value,
                                                    (current_token_position[0], current_token_position[1] - 1))
@@ -102,7 +102,7 @@ class Reversi:
                                                      (current_token_position[0] + 1, current_token_position[1]))
 
     def __conquer_every_top_enemy_token(self, initial_token_value, current_token_position):
-        if initial_token_value != self.game_matrix[current_token_position]:
+        if self.__reverse_game_token_value(initial_token_value) == self.game_matrix[current_token_position]:
             self.game_matrix[current_token_position] = initial_token_value
             self.__conquer_every_top_enemy_token(initial_token_value,
                                                  (current_token_position[0] + 1, current_token_position[1]))
@@ -119,7 +119,7 @@ class Reversi:
                                                         (current_token_position[0] - 1, current_token_position[1]))
 
     def __conquer_every_bottom_enemy_token(self, initial_token_value, current_token_position):
-        if initial_token_value != self.game_matrix[current_token_position]:
+        if self.__reverse_game_token_value(initial_token_value) == self.game_matrix[current_token_position]:
             self.game_matrix[current_token_position] = initial_token_value
             self.__conquer_every_bottom_enemy_token(initial_token_value,
                                                     (current_token_position[0] - 1, current_token_position[1]))
@@ -139,7 +139,7 @@ class Reversi:
                                                               current_token_position[1] + 1))
 
     def __conquer_every_top_left_enemy_token(self, initial_token_value, current_token_position):
-        if initial_token_value != self.game_matrix[current_token_position]:
+        if self.__reverse_game_token_value(initial_token_value) == self.game_matrix[current_token_position]:
             self.game_matrix[current_token_position] = initial_token_value
             self.__conquer_every_top_left_enemy_token(initial_token_value,
                                                       (current_token_position[0] + 1, current_token_position[1] + 1))
@@ -158,7 +158,7 @@ class Reversi:
                                                                current_token_position[1] - 1))
 
     def __conquer_every_bottom_right_enemy_token(self, initial_token_value, current_token_position):
-        if initial_token_value != self.game_matrix[current_token_position]:
+        if self.__reverse_game_token_value(initial_token_value) == self.game_matrix[current_token_position]:
             self.game_matrix[current_token_position] = initial_token_value
             self.__conquer_every_bottom_right_enemy_token(initial_token_value,
                                                           (
@@ -180,7 +180,7 @@ class Reversi:
                                                                current_token_position[1] - 1))
 
     def __conquer_every_top_right_enemy_token(self, initial_token_value, current_token_position):
-        if initial_token_value != self.game_matrix[current_token_position]:
+        if self.__reverse_game_token_value(initial_token_value) == self.game_matrix[current_token_position]:
             self.game_matrix[current_token_position] = initial_token_value
             self.__conquer_every_top_right_enemy_token(initial_token_value,
                                                        (current_token_position[0] + 1, current_token_position[1] - 1))
@@ -200,7 +200,7 @@ class Reversi:
                                                                  current_token_position[1] + 1))
 
     def __conquer_every_bottom_left_enemy_token(self, initial_token_value, current_token_position):
-        if initial_token_value != self.game_matrix[current_token_position]:
+        if self.__reverse_game_token_value(initial_token_value) == self.game_matrix[current_token_position]:
             self.game_matrix[current_token_position] = initial_token_value
             self.__conquer_every_bottom_left_enemy_token(initial_token_value,
                                                          (current_token_position[0] - 1, current_token_position[1] + 1))

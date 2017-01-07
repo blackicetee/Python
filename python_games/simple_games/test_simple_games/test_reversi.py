@@ -374,6 +374,30 @@ class TestGameTokenMove(unittest.TestCase):
         asserted_game_field.put_game_token('W', (6, 6))
         self.assertTrue((asserted_game_field.game_matrix == reversi.game_matrix).all())
 
+    def test_conquer_bottom_right_but_no_bottom_white_tokens(self):
+        reversi = Reversi()
+        reversi.put_game_token('B', (3, 3))
+        reversi.put_game_token('B', (4, 4))
+        reversi.put_game_token('W', (4, 3))
+        reversi.put_game_token('W', (3, 4))
+        reversi.game_token_move('B', (2, 4))
+        reversi.game_token_move('W', (2, 3))
+        reversi.game_token_move('B', (2, 2))
+        reversi.game_token_move('W', (1, 3))
+        reversi.game_token_move('B', (0, 2))
+        print(reversi.game_matrix)
+        asserted_game_field = Reversi()
+        asserted_game_field.put_game_token('B', (2, 4))
+        asserted_game_field.put_game_token('B', (3, 4))
+        asserted_game_field.put_game_token('B', (4, 4))
+        asserted_game_field.put_game_token('W', (2, 3))
+        asserted_game_field.put_game_token('W', (3, 3))
+        asserted_game_field.put_game_token('W', (4, 3))
+        asserted_game_field.put_game_token('B', (2, 2))
+        asserted_game_field.put_game_token('B', (0, 2))
+        asserted_game_field.put_game_token('B', (1, 3))
+        print(asserted_game_field.game_matrix)
+        self.assertTrue((asserted_game_field.game_matrix == reversi.game_matrix).all())
 
 
 
