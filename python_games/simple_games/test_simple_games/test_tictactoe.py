@@ -17,6 +17,10 @@ class TestInitializeTicTacToe(unittest.TestCase):
         ttt_8x8 = TicTacToe(8, 8)
         self.assertEqual((8, 8), shape(ttt_8x8.game_matrix))
 
+    def test_create_empty_4x4_game_matrix(self):
+        empty_game_matrix = TicTacToe(4,4)
+
+
 
 class TestTranslateGameTokenType(unittest.TestCase):
     """Tests if game token type is translated correctly into predefined
