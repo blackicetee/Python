@@ -32,22 +32,36 @@ def create_random_tictactoe_training_example():
     return [action_sequence, target_value, tictactoe]
 
 
+def write_every_element_in_list_to_open_textfile(open_textfile, list):
+    for element in list:
+        open_textfile.write("{}|".format(str(element)))
+
+
 def write_string_in_file(string, file_name):
     with open(file_name, "w") as text_file:
         text_file.write("{}".format(string))
+
 
 def generate_amount_of_tictactoe_training_sets_with_representatoin(amount_of_tictactoe_training_sets):
     with open(TICTACTOE_TRAINING_SET, "w") as text_file:
         for amount in range(amount_of_tictactoe_training_sets):
             result_list = create_random_tictactoe_training_example()
             string = result_list[2].printable_game_matrix() + 'action_sequence: ' + str(
-                    result_list[0]) + '\n' + 'target_value: ' + result_list[1] + '\n\n'
+                result_list[0]) + '\n' + 'target_value: ' + result_list[1] + '\n\n'
             text_file.write("{}".format(string))
+
 
 def generate_amount_of_tictactoe_training_sets(amount_of_tictactoe_training_sets):
     with open(TICTACTOE_TRAINING_SET, "w") as text_file:
+        column_label = "LvL 1 |LvL 2 |LvL 3 |LvL 4 |LvL 5 |LvL 6 |LvL 7 |LvL 8 |LvL 9 |LvL 10|LvL 11|LvL 12|LvL 13|LvL 14|LvL 15|LvL 16|Target Value"
+        table_limits = "______|______|______|______|______|______|______|______|______|______|______|______|______|______|______|______|____________"
+        text_file.write("{}\n".format(column_label))
+        text_file.write("{}\n".format(table_limits))
         for amount in range(amount_of_tictactoe_training_sets):
             result_list = create_random_tictactoe_training_example()
-            string = str(result_list[0]) + result_list[1] + '\n'
-            text_file.write("{}".format(string))
-generate_amount_of_tictactoe_training_sets(10000)
+            white_space_buffer = 16 - len(result_list[0])
+            write_every_element_in_list_to_open_textfile(text_file, result_list[0])
+            text_file.write("{}\n".format(("      |" * white_space_buffer) + result_list[1]))
+
+
+generate_amount_of_tictactoe_training_sets(10)
