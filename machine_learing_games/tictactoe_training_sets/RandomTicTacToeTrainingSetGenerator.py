@@ -1,11 +1,12 @@
-from python_games.simple_games.NewTicTacToe import NewTicTacToe
 from random import randint
+
+from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 
 TICTACTOE_TRAINING_SET = "tictactoe_training_set.txt"
 
 
 def create_random_tictactoe_training_example():
-    tictactoe = NewTicTacToe(4)
+    tictactoe = TicTacToe(4)
     round_count = 0
     target_value = ''
     action_sequence = []

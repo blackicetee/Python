@@ -2,12 +2,12 @@ import unittest
 
 import numpy as np
 
-from python_games.simple_games.NewTicTacToe import NewTicTacToe
+from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 
 
 class TestInitializeTicTacToe(unittest.TestCase):
     def test_initialize_4x4_game_matrix(self):
-        tictactoe = NewTicTacToe(4)
+        tictactoe = TicTacToe(4)
         test_matrix = np.matrix([[' ', ' ', ' ', ' '],
                                  [' ', ' ', ' ', ' '],
                                  [' ', ' ', ' ', ' '],
@@ -17,7 +17,7 @@ class TestInitializeTicTacToe(unittest.TestCase):
     def test_initialize_game_matrix_with_action_sequenz(self):
         action_sequenz = [(0, 0), (3, 2), (0, 3), (1, 0), (1, 3), (2, 0), (3, 0), (0, 2), (3, 1), (2, 2), (2, 1),
                           (1, 1), (0, 1), (1, 2)]
-        tictactoe = NewTicTacToe(4)
+        tictactoe = TicTacToe(4)
         tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz, 'X')
         expected_game_matrix = np.matrix([['X', 'X', 'O', 'X'],
                                           ['O', 'O', 'O', 'X'],
@@ -28,8 +28,8 @@ class TestInitializeTicTacToe(unittest.TestCase):
 
 class TestPutGameToken(unittest.TestCase):
     def setUp(self):
-        self.ticTacToe = NewTicTacToe(4)
-        self.example_ticTacToe_game = NewTicTacToe(4)
+        self.ticTacToe = TicTacToe(4)
+        self.example_ticTacToe_game = TicTacToe(4)
         self.example_ticTacToe_game.put_game_token('X', (0, 0))
         self.example_ticTacToe_game.put_game_token('O', (3, 3))
         self.example_ticTacToe_game.put_game_token('X', (0, 1))
@@ -39,7 +39,7 @@ class TestPutGameToken(unittest.TestCase):
         self.example_ticTacToe_game.put_game_token('X', (0, 3))
 
     def test_invalid_game_tokens_or_positions(self):
-        tictactoe = NewTicTacToe(4)
+        tictactoe = TicTacToe(4)
         test_matrix = np.matrix([[' ', ' ', ' ', ' '],
                                  [' ', ' ', ' ', ' '],
                                  [' ', ' ', ' ', ' '],
@@ -72,13 +72,13 @@ class TestPutGameToken(unittest.TestCase):
 
 class TestPossibleMoves(unittest.TestCase):
     def test_16_possible_moves(self):
-        tictactoe = NewTicTacToe(4)
+        tictactoe = TicTacToe(4)
         self.assertEqual(
             [(0, 0), (0, 1), (0, 2), (0, 3), (1, 0), (1, 1), (1, 2), (1, 3), (2, 0), (2, 1), (2, 2), (2, 3), (3, 0),
              (3, 1), (3, 2), (3, 3)], tictactoe.get_possible_moves())
 
     def test_10_possible_moves(self):
-        tictactoe = NewTicTacToe(4)
+        tictactoe = TicTacToe(4)
         tictactoe.put_game_token('X', (0, 0))
         tictactoe.put_game_token('O', (0, 1))
         tictactoe.put_game_token('X', (0, 2))
@@ -90,7 +90,7 @@ class TestPossibleMoves(unittest.TestCase):
             tictactoe.get_possible_moves())
 
     def test_5_possible_moves(self):
-        tictactoe = NewTicTacToe(4)
+        tictactoe = TicTacToe(4)
         tictactoe.put_game_token('X', (0, 0))
         tictactoe.put_game_token('O', (0, 1))
         tictactoe.put_game_token('X', (0, 2))
@@ -107,7 +107,7 @@ class TestPossibleMoves(unittest.TestCase):
 
 class TestHorizontalVictory(unittest.TestCase):
     def setUp(self):
-        self.example_ticTacToe_game = NewTicTacToe(4)
+        self.example_ticTacToe_game = TicTacToe(4)
         self.example_ticTacToe_game.put_game_token('X', (2, 0))
         self.example_ticTacToe_game.put_game_token('O', (3, 3))
         self.example_ticTacToe_game.put_game_token('X', (2, 1))
@@ -125,7 +125,7 @@ class TestHorizontalVictory(unittest.TestCase):
 
 class TestVerticalVictory(unittest.TestCase):
     def setUp(self):
-        self.example_ticTacToe_game = NewTicTacToe(4)
+        self.example_ticTacToe_game = TicTacToe(4)
         self.example_ticTacToe_game.put_game_token('X', (0, 0))
         self.example_ticTacToe_game.put_game_token('O', (3, 3))
         self.example_ticTacToe_game.put_game_token('X', (1, 0))
@@ -143,7 +143,7 @@ class TestVerticalVictory(unittest.TestCase):
 
 class TestDiagonalVictory(unittest.TestCase):
     def setUp(self):
-        self.example_ticTacToe_game = NewTicTacToe(4)
+        self.example_ticTacToe_game = TicTacToe(4)
         self.example_ticTacToe_game.put_game_token('X', (0, 0))
         self.example_ticTacToe_game.put_game_token('O', (3, 0))
         self.example_ticTacToe_game.put_game_token('X', (1, 1))
@@ -156,7 +156,7 @@ class TestDiagonalVictory(unittest.TestCase):
         self.assertTrue(self.example_ticTacToe_game.is_diagonal_victory())
 
     def test_digital_victory_top_right_to_bottom_left(self):
-        example_tictactoe = NewTicTacToe(4)
+        example_tictactoe = TicTacToe(4)
         example_tictactoe.put_game_token('X', (0, 3))
         example_tictactoe.put_game_token('O', (0, 0))
         example_tictactoe.put_game_token('X', (1, 2))
@@ -172,7 +172,7 @@ class TestDiagonalVictory(unittest.TestCase):
 
 class TestVictory(unittest.TestCase):
     def setUp(self):
-        self.example_ticTacToe_game = NewTicTacToe(4)
+        self.example_ticTacToe_game = TicTacToe(4)
         self.example_ticTacToe_game.put_game_token('X', (0, 0))
         self.example_ticTacToe_game.put_game_token('O', (0, 1))
         self.example_ticTacToe_game.put_game_token('X', (0, 2))

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class NewTicTacToe:
+class TicTacToe:
     """Represents the game TicTacToe and menages the placement of game tokens on the game matrix,
     winning- and loosing conditions and resetting game field values.
 

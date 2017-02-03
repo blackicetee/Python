@@ -1,18 +1,19 @@
-from learning_agents.TicTacToeDescionsionTreeAgent import TicTacToeDecisionTreeAgent
-from python_games.simple_games.NewTicTacToe import NewTicTacToe
 from random import randint
+
+from machine_learing_games.learning_agents.TicTacToeDescionsionTreeAgent import TicTacToeDecisionTreeAgent
+from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 
 
 class TicTacToeEnvironment:
     def __init__(self):
         self.__tictactoe_desision_tree_agent = TicTacToeDecisionTreeAgent()
-        self.__tictactoe = NewTicTacToe(4)
+        self.__tictactoe = TicTacToe(4)
         self.__round_count = 0
         self.__action_sequence = []
         self.__game_result = ''
 
     def __initialize_new_tictactoe_game(self):
-        self.__tictactoe = NewTicTacToe(4)
+        self.__tictactoe = TicTacToe(4)
         self.__round_count = 0
         self.__action_sequence = []
         self.__game_result = ''

@@ -1,6 +1,8 @@
-from python_games.simple_games.NewTicTacToe import NewTicTacToe
-from random import randint
 import os
+from random import randint
+
+from machine_learing_games.MachineLearingGamesRoot import ROOT_DIR
+from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 
 
 # first machine learning approach:
@@ -18,16 +20,14 @@ import os
 #       Aim:
 #           Optimise the strategy for better game results.
 
-
+TICTACTOE_TRAINING_SET = os.path.join(ROOT_DIR, "tictactoe_training_sets\\tictactoe_training_set.txt")
+TICTACTOE_AGENT_EXPERIENCE = os.path.join(ROOT_DIR, "learning_agents\\tictactoe_agent_experience.txt")
 
 class TicTacToeDecisionTreeAgent:
-    TICTACTOE_TRAINING_SET = os.path.abspath("tictactoe_training_set.txt")
-    TICTACTOE_AGENT_EXPERIENCE = os.path.abspath("tictactoe_agent_experience.txt")
-
     def __init__(self):
         self.__possible_actions = []
-        self.__tictactoe = NewTicTacToe(4)
-        self.__training_set = self.__read_tictactoe_training_set(self.TICTACTOE_TRAINING_SET)
+        self.__tictactoe = TicTacToe(4)
+        self.__training_set = self.__read_tictactoe_training_set(TICTACTOE_TRAINING_SET)
 
     @property
     def training_set(self):
@@ -43,14 +43,14 @@ class TicTacToeDecisionTreeAgent:
     def receive_reward(self, reward, action_sequence):
         if reward != '' and action_sequence != []:
             self.__create_tictactoe_agent_experience_file_if_not_exist()
-            with open(self.TICTACTOE_AGENT_EXPERIENCE, "a") as text_file:
+            with open(TICTACTOE_AGENT_EXPERIENCE, "a") as text_file:
                 white_space_buffer = 16 - len(action_sequence)
                 self.__write_every_element_in_list_to_open_textfile(text_file, action_sequence)
                 text_file.write("{}\n".format(("      |" * white_space_buffer) + reward))
 
     def __create_tictactoe_agent_experience_file_if_not_exist(self):
-        if not os.path.isfile(self.TICTACTOE_AGENT_EXPERIENCE):
-            with open(self.TICTACTOE_AGENT_EXPERIENCE, "w") as text_file:
+        if not os.path.isfile(TICTACTOE_AGENT_EXPERIENCE):
+            with open(TICTACTOE_AGENT_EXPERIENCE, "w") as text_file:
                 column_label = "LvL 1 |LvL 2 |LvL 3 |LvL 4 |LvL 5 |LvL 6 |LvL 7 |LvL 8 |LvL 9 |LvL 10|LvL 11|LvL 12|LvL 13|LvL 14|LvL 15|LvL 16|Target Value"
                 table_limits = "______|______|______|______|______|______|______|______|______|______|______|______|______|______|______|______|____________"
                 text_file.write("{}\n".format(column_label))
