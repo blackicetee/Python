@@ -21,60 +21,47 @@ import os
 
 
 class TicTacToeDecisionTreeAgent:
-    TICTACTOE_TRAINING_SET = "E:\GitHub\python\machine_learning_approaches\\tictactoe_training_set.txt"
-    TICTACTOE_AGENT_EXPERIENCE = "E:\GitHub\python\machine_learning_approaches\\tictactoe_agent_experience.txt"
+    TICTACTOE_TRAINING_SET = os.path.abspath("tictactoe_training_set.txt")
+    TICTACTOE_AGENT_EXPERIENCE = os.path.abspath("tictactoe_agent_experience.txt")
 
     def __init__(self):
         self.__possible_actions = []
-        self.__action_sequence = []
         self.__tictactoe = NewTicTacToe(4)
-        self.__training_set = self.__read_tictactoe_training_set()
+        self.__training_set = self.__read_tictactoe_training_set(self.TICTACTOE_TRAINING_SET)
 
     @property
     def training_set(self):
         return self.__training_set
 
-    def update_state(self, tictactoe_state, enemy_action):
+    def get_action_decision(self, tictactoe_state):
         self.__tictactoe = tictactoe_state
-        if enemy_action != ():
-            self.__action_sequence.append(enemy_action)
+        self.__possible_actions = self.__tictactoe.get_possible_moves()
+        # TODO dont return random action, return strategic action
+        random_action = randint(0, (len(self.__possible_actions) - 1))
+        return self.__possible_actions[random_action]
 
-    def receive_reward(self, reward):
-        if reward != '':
-            if not os.path.isfile(self.TICTACTOE_AGENT_EXPERIENCE):
-                with open(self.TICTACTOE_AGENT_EXPERIENCE, "w") as text_file:
-                    column_label = "LvL 1 |LvL 2 |LvL 3 |LvL 4 |LvL 5 |LvL 6 |LvL 7 |LvL 8 |LvL 9 |LvL 10|LvL 11|LvL 12|LvL 13|LvL 14|LvL 15|LvL 16|Target Value"
-                    table_limits = "______|______|______|______|______|______|______|______|______|______|______|______|______|______|______|______|____________"
-                    text_file.write("{}\n".format(column_label))
-                    text_file.write("{}\n".format(table_limits))
-                    white_space_buffer = 16 - len(self.__action_sequence)
-                    self.__write_every_element_in_list_to_open_textfile(text_file, self.__action_sequence)
-                    text_file.write("{}\n".format(("      |" * white_space_buffer) + reward))
-                    self.__action_sequence = []
-            elif os.path.isfile(self.TICTACTOE_AGENT_EXPERIENCE):
-                with open(self.TICTACTOE_AGENT_EXPERIENCE, "a") as text_file:
-                    white_space_buffer = 16 - len(self.__action_sequence)
-                    self.__write_every_element_in_list_to_open_textfile(text_file, self.__action_sequence)
-                    text_file.write("{}\n".format(("      |" * white_space_buffer) + reward))
-                    self.__action_sequence = []
+    def receive_reward(self, reward, action_sequence):
+        if reward != '' and action_sequence != []:
+            self.__create_tictactoe_agent_experience_file_if_not_exist()
+            with open(self.TICTACTOE_AGENT_EXPERIENCE, "a") as text_file:
+                white_space_buffer = 16 - len(action_sequence)
+                self.__write_every_element_in_list_to_open_textfile(text_file, action_sequence)
+                text_file.write("{}\n".format(("      |" * white_space_buffer) + reward))
 
+    def __create_tictactoe_agent_experience_file_if_not_exist(self):
+        if not os.path.isfile(self.TICTACTOE_AGENT_EXPERIENCE):
+            with open(self.TICTACTOE_AGENT_EXPERIENCE, "w") as text_file:
+                column_label = "LvL 1 |LvL 2 |LvL 3 |LvL 4 |LvL 5 |LvL 6 |LvL 7 |LvL 8 |LvL 9 |LvL 10|LvL 11|LvL 12|LvL 13|LvL 14|LvL 15|LvL 16|Target Value"
+                table_limits = "______|______|______|______|______|______|______|______|______|______|______|______|______|______|______|______|____________"
+                text_file.write("{}\n".format(column_label))
+                text_file.write("{}\n".format(table_limits))
 
     def __write_every_element_in_list_to_open_textfile(self, open_textfile, list):
         for element in list:
             open_textfile.write("{}|".format(str(element)))
 
-    def get_action_decision(self):
-        self.__possible_actions = self.__tictactoe.get_possible_moves()
-        # TODO dont return random action, return strategic action
-        random_action = randint(0, (len(self.__possible_actions) - 1))
-        print self.__possible_actions
-        print random_action
-        print self.__possible_actions[random_action]
-        self.__action_sequence.append(self.__possible_actions[random_action])
-        return self.__possible_actions[random_action]
-
-    def __read_tictactoe_training_set(self):
-        with open(self.TICTACTOE_TRAINING_SET, "r") as text_file:
+    def __read_tictactoe_training_set(self, training_set_filename):
+        with open(training_set_filename, "r") as text_file:
             results = []
             list_of_sequences = []
             text_file.readline()
@@ -125,9 +112,6 @@ class TicTacToeDecisionTreeAgent:
             target_values_in_level[length_index]["draws"] = list_of_aciton_sequence_length_and_target_value.count(
                 (length_index, "draw"))
         return target_values_in_level
-
-        # def play_tictactoe(self):
-
 
 # TODO write tests for the functions
 """

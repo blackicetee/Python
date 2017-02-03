@@ -55,6 +55,19 @@ class NewTicTacToe:
         """
         return self.__game_matrix
 
+    def initialize_game_matrix_with_action_sequence(self, action_sequence, starting_player_token):
+        self.__init__(4)
+        actions_processed = 0
+        for action in action_sequence:
+            if actions_processed % 2 == 0:
+                self.put_game_token(starting_player_token, action)
+                actions_processed += 1
+            else:
+                game_token_type = self.__get_opposite_game_token_type(starting_player_token)
+                if game_token_type is not None:
+                    self.put_game_token(str(game_token_type), action)
+                    actions_processed += 1
+
     def printable_game_matrix(self):
         print_string = ''
         for row in range(self.__dimension):

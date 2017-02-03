@@ -14,6 +14,17 @@ class TestInitializeTicTacToe(unittest.TestCase):
                                  [' ', ' ', ' ', ' ']])
         self.assertTrue((test_matrix == tictactoe.game_matrix).all())
 
+    def test_initialize_game_matrix_with_action_sequenz(self):
+        action_sequenz = [(0, 0), (3, 2), (0, 3), (1, 0), (1, 3), (2, 0), (3, 0), (0, 2), (3, 1), (2, 2), (2, 1),
+                          (1, 1), (0, 1), (1, 2)]
+        tictactoe = NewTicTacToe(4)
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz, 'X')
+        expected_game_matrix = np.matrix([['X', 'X', 'O', 'X'],
+                                          ['O', 'O', 'O', 'X'],
+                                          ['O', 'X', 'O', ' '],
+                                          ['X', 'X', 'O', ' ']])
+        self.assertTrue((expected_game_matrix == tictactoe.game_matrix).all())
+
 
 class TestPutGameToken(unittest.TestCase):
     def setUp(self):
