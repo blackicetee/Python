@@ -3,6 +3,7 @@ from random import randint
 
 from machine_learing_games.MachineLearingGamesRoot import ROOT_DIR
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
+import DescisionTree
 
 
 # first machine learning approach:
@@ -12,6 +13,23 @@ from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 #       Aim:
 #           With this training set the agent creates a decision tree.
 #           The tree should define when to choose which action to get a win and avoid a lost.
+#           In more detail the agent should learn from the tree if a game state is better,
+#           maybe because he wins more often if he reaches this state of the game.
+#           So the agent tries to learn which state should be preferred in order to get a win and
+#           avoid a lose.
+#           In short the agent learns his own estimation function(s) = (vector A --> vector R)
+#           which maps current state and actions pairs to rewards.
+#
+#
+#       Information:
+#           Every node of the tree represents a state, many of those states are redundant.
+#           To minimize the tree, those redundant nodes and edges should be avoided or eliminated.
+#           In level 16 every leaf node either results in a draw or lose.
+#           Every leaf node from level 7 but only uneven ones until level 15 result into a win.
+#           Leaf nodes with an even level number from level 8 until level 16 result into a lose,
+#           but level 16 can also be a draw.
+#           Every node in level 16 is a leaf node.
+#
 
 # second machine learning approach:
 #       The agent has no training set, but a strategy which specifies
@@ -37,6 +55,7 @@ class TicTacToeDecisionTreeAgent:
         self.__tictactoe = tictactoe_state
         self.__possible_actions = self.__tictactoe.get_possible_moves()
         # TODO dont return random action, return strategic action
+
         random_action = randint(0, (len(self.__possible_actions) - 1))
         return self.__possible_actions[random_action]
 
