@@ -1,5 +1,6 @@
 from random import randint
 
+from machine_learing_games.learning_agents.EasyTicTacToeAgent import EasyTicTacToeAgent
 from machine_learing_games.learning_agents.TicTacToeDescionsionTreeAgent import TicTacToeDecisionTreeAgent
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 
@@ -7,6 +8,7 @@ from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 class TicTacToeEnvironment:
     def __init__(self):
         self.__tictactoe_desision_tree_agent = TicTacToeDecisionTreeAgent()
+        self.__easy_tictactoe_agent = EasyTicTacToeAgent()
         self.__tictactoe = TicTacToe(4)
         self.__round_count = 0
         self.__action_sequence = []
@@ -17,6 +19,9 @@ class TicTacToeEnvironment:
         self.__round_count = 0
         self.__action_sequence = []
         self.__game_result = ''
+
+    def train_easy_tictactoe_agent(self):
+        self.__easy_tictactoe_agent.get_move(self.__tictactoe)
 
     def train_decision_tree_agent_x_times_against_random_agent(self, times):
         for game in range(0, times):
@@ -31,8 +36,6 @@ class TicTacToeEnvironment:
         if self.__round_count == 16 and not self.__tictactoe.is_victory():
             self.__game_result = 'draw'
         elif (self.__round_count % 2) == 0 and self.__tictactoe.is_victory():
-            print self.__action_sequence
-            print self.__tictactoe.printable_game_matrix()
             self.__game_result = 'lost'
         elif (self.__round_count % 2) == 1 and self.__tictactoe.is_victory():
             self.__game_result = 'win'
@@ -65,4 +68,4 @@ class TicTacToeEnvironment:
 
 
 tictactoe_environment = TicTacToeEnvironment()
-tictactoe_environment.train_decision_tree_agent_x_times_against_random_agent(20)
+#tictactoe_environment.train_decision_tree_agent_x_times_against_random_agent(20)

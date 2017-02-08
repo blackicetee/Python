@@ -3,7 +3,6 @@ from random import randint
 
 from machine_learing_games.MachineLearingGamesRoot import ROOT_DIR
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
-import DescisionTree
 
 
 # first machine learning approach:
