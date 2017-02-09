@@ -57,6 +57,10 @@ class TicTacToe:
         """
         return self.__game_matrix
 
+    @game_matrix.setter
+    def game_matrix(self, game_matrix):
+        self.__game_matrix = game_matrix
+
     def initialize_game_matrix_with_action_sequence(self, action_sequence, starting_player_token):
         self.__init__(4)
         actions_processed = 0
@@ -81,6 +85,14 @@ class TicTacToe:
                 else:
                     print_string += self.__game_matrix[row, col] + ' | '
         return print_string
+
+    def count_of_game_tokens_in_game(self):
+        count = 0
+        for row in range(self.__dimension):
+            for col in range(self.__dimension):
+                if self.__game_matrix[row, col] == 'X' or self.__game_matrix[row, col] == 'O':
+                    count += 1
+        return count
 
     def put_game_token(self, game_token, position):
         """Puts/places a game token at a specified position on the game matrix.

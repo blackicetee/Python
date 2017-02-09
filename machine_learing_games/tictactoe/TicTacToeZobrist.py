@@ -30,21 +30,3 @@ class TicTacToeZobrist:
             for col in range(tictactoe_game_matrix.shape[1]):
                 one_dimensional_list.append(tictactoe_game_matrix[row, col])
         return one_dimensional_list
-
-
-zobrist = TicTacToeZobrist()
-for i in zobrist.zArray:
-    print i
-
-print zobrist.get_hash(np.matrix([['X', 'X', 'O', 'X'],
-                            ['O', 'O', 'O', 'X'],
-                            ['O', 'X', 'O', ' '],
-                            ['X', 'X', 'O', ' ']]))
-print zobrist.get_hash(np.matrix([['X', 'X', 'O', 'X'],
-                            ['O', 'O', 'O', 'X'],
-                            ['O', 'X', 'O', ' '],
-                            ['X', 'X', 'O', ' ']]))
-print zobrist.get_hash(np.matrix([['X', 'X', 'O', 'X'],
-                            ['O', 'O', 'O', 'X'],
-                            ['O', 'X', 'O', ' '],
-                            ['X', 'X', 'O', ' ']]))
