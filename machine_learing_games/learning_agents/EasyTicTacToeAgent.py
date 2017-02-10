@@ -31,7 +31,7 @@ class EasyTicTacToeAgent:
         self.__tictactoe = tictactoe
         self.__save_data_in_transposition_table()
 
-    def __save_data_in_transposition_table(self, use_value, alpha, beta, optimal_move, depth, player_turn):
+    def __save_data_in_transposition_table(self):
         zobrist_hash = self.__zobrist_hashing.get_hash(self.__tictactoe.game_matrix)
         usefulness = 0
         alpha = 0
@@ -39,7 +39,7 @@ class EasyTicTacToeAgent:
         optimal_move = (0, 0)
         depth = self.__tictactoe.count_of_game_tokens_in_game()
         player_turn = self.__calculate_player_turn(self.__tictactoe)
-        self.__agent_experience_db.insert_agent_experience(zobrist_hash, usefulness, alpha, beta, str(optimal_move),
+        self.__agent_experience_db.insert_transposition(zobrist_hash, usefulness, alpha, beta, str(optimal_move),
                                                            depth, player_turn)
 
     def __calculate_enemy_move(self, new_state=TicTacToe(4)):

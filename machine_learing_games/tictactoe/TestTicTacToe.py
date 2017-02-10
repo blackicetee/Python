@@ -26,6 +26,23 @@ class TestInitializeTicTacToe(unittest.TestCase):
         self.assertTrue((expected_game_matrix == tictactoe.game_matrix).all())
 
 
+class TestPrintableGameMatrix(unittest.TestCase):
+    def test_four_times_four_printable_game_matrix(self):
+        action_sequenz = [(0, 0), (3, 2), (0, 3), (1, 0), (1, 3), (2, 0), (3, 0), (0, 2), (3, 1), (2, 2), (2, 1),
+                          (1, 1), (0, 1), (1, 2)]
+        tictactoe = TicTacToe(4)
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz, 'X')
+        test_game_matrix_string = 'X | X | O | X\n-------------\nO | O | O | X\n-------------\nO | X | O |  \n-------------\nX | X | O |  \n'
+        self.assertEqual(tictactoe.printable_game_matrix(), test_game_matrix_string)
+
+    def test_three_times_three_printable_game_matrix(self):
+        action_sequenz = [(0, 0), (1, 0), (2, 0), (0, 2), (2, 2), (2, 1), (1, 1), (0, 1), (1, 2)]
+        tictactoe = TicTacToe(3)
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz, 'X')
+        test_game_matrix_string = 'X | O | O\n---------\nO | X | X\n---------\nX | O | X\n'
+        self.assertEqual(tictactoe.printable_game_matrix(), test_game_matrix_string)
+
+
 class TestPutGameToken(unittest.TestCase):
     def setUp(self):
         self.ticTacToe = TicTacToe(4)
@@ -206,10 +223,11 @@ def suite():
     """Returns an aggregation(called test suite)
     of all test cases in this test module"""
     suite1 = unittest.TestLoader().loadTestsFromTestCase(TestInitializeTicTacToe)
-    suite2 = unittest.TestLoader().loadTestsFromTestCase(TestPutGameToken)
-    suite3 = unittest.TestLoader().loadTestsFromTestCase(TestPossibleMoves)
-    suite4 = unittest.TestLoader().loadTestsFromTestCase(TestHorizontalVictory)
-    suite5 = unittest.TestLoader().loadTestsFromTestCase(TestVerticalVictory)
-    suite6 = unittest.TestLoader().loadTestsFromTestCase(TestDiagonalVictory)
-    suite7 = unittest.TestLoader().loadTestsFromTestCase(TestVictory)
-    return unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6, suite7])
+    suite2 = unittest.TestLoader().loadTestsFromTestCase(TestPrintableGameMatrix)
+    suite3 = unittest.TestLoader().loadTestsFromTestCase(TestPutGameToken)
+    suite4 = unittest.TestLoader().loadTestsFromTestCase(TestPossibleMoves)
+    suite5 = unittest.TestLoader().loadTestsFromTestCase(TestHorizontalVictory)
+    suite6 = unittest.TestLoader().loadTestsFromTestCase(TestVerticalVictory)
+    suite7 = unittest.TestLoader().loadTestsFromTestCase(TestDiagonalVictory)
+    suite8 = unittest.TestLoader().loadTestsFromTestCase(TestVictory)
+    return unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6, suite7, suite8])

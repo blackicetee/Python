@@ -57,22 +57,22 @@ class TicTacToe:
         """
         return self.__game_matrix
 
-    @game_matrix.setter
-    def game_matrix(self, game_matrix):
-        self.__game_matrix = game_matrix
+    def initialize_game_matrix_with_another_game_matrix(self, another_game_matrix):
+        self.__game_matrix[:] = another_game_matrix[:]
 
     def initialize_game_matrix_with_action_sequence(self, action_sequence, starting_player_token):
-        self.__init__(4)
-        actions_processed = 0
-        for action in action_sequence:
-            if actions_processed % 2 == 0:
-                self.put_game_token(starting_player_token, action)
-                actions_processed += 1
-            else:
-                game_token_type = self.__get_opposite_game_token_type(starting_player_token)
-                if game_token_type is not None:
-                    self.put_game_token(str(game_token_type), action)
+        if len(action_sequence) <= (self.__dimension * self.__dimension):
+            self.__init__(self.__dimension)
+            actions_processed = 0
+            for action in action_sequence:
+                if actions_processed % 2 == 0:
+                    self.put_game_token(starting_player_token, action)
                     actions_processed += 1
+                else:
+                    game_token_type = self.__get_opposite_game_token_type(starting_player_token)
+                    if game_token_type is not None:
+                        self.put_game_token(str(game_token_type), action)
+                        actions_processed += 1
 
     def printable_game_matrix(self):
         print_string = ''
@@ -94,6 +94,9 @@ class TicTacToe:
                     count += 1
         return count
 
+    def get_maximal_amount_of_game_tokens(self):
+        return (self.__dimension * self.__dimension)
+
     def put_game_token(self, game_token, position):
         """Puts/places a game token at a specified position on the game matrix.
 
@@ -109,7 +112,7 @@ class TicTacToe:
         """
         if self.__is_correct_game_token_type(game_token):
             if self.__is_position_free(position):
-                self.game_matrix[position[0], position[1]] = game_token
+                self.__game_matrix[position[0], position[1]] = game_token
 
     def get_possible_moves(self):
         """Suggests at which positions a player could place his game token.
@@ -186,7 +189,7 @@ class TicTacToe:
             False if the position inside the game matrix is taken or the position is outside the game matrix.
         """
         if (position[0] < self.__dimension and position[1] < self.__dimension) and \
-                        self.game_matrix[position[0], position[1]] == ' ':
+                        self.__game_matrix[position[0], position[1]] == ' ':
             return True
         else:
             return False
@@ -269,9 +272,9 @@ class TicTacToe:
         diagonal_values_top_left_to_bottom_right = []
         diagonal_values_top_right_to_bottom_left = []
         for coordinate in range(self.__dimension):
-            diagonal_values_top_left_to_bottom_right.append(self.game_matrix[coordinate, coordinate])
+            diagonal_values_top_left_to_bottom_right.append(self.__game_matrix[coordinate, coordinate])
             diagonal_values_top_right_to_bottom_left.append(
-                self.game_matrix[coordinate, (self.__dimension - 1) - coordinate])
+                self.__game_matrix[coordinate, (self.__dimension - 1) - coordinate])
         return self.__check_equality_of_list_elements(
             diagonal_values_top_left_to_bottom_right) or self.__check_equality_of_list_elements(
             diagonal_values_top_right_to_bottom_left)
