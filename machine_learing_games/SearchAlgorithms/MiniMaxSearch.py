@@ -48,8 +48,10 @@ def player(state):
 
 def terminal_test(state):
     if state.is_victory():
+        print state.printable_game_matrix()
         return True
     elif not state.is_victory() and state.count_of_game_tokens_in_game() == state.get_maximal_amount_of_game_tokens():
+        print state.printable_game_matrix()
         return True
     else:
         return False
