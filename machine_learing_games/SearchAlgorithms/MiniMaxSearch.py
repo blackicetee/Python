@@ -1,6 +1,8 @@
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 import sys
+import time
 from numpy import argmax
+
 
 def mini_max_decision(state):
     list_of_actions = actions(state)
@@ -8,7 +10,7 @@ def mini_max_decision(state):
     for action in list_of_actions:
         list_of_action_utilities.append(min_value(result(state, action)))
     best_action_index = argmax(list_of_action_utilities)
-    return list_of_actions[best_action_index]
+    return list_of_actions[best_action_index], list_of_action_utilities[best_action_index]
 
 
 def max_value(state):
@@ -48,10 +50,8 @@ def player(state):
 
 def terminal_test(state):
     if state.is_victory():
-        print state.printable_game_matrix()
         return True
     elif not state.is_victory() and state.count_of_game_tokens_in_game() == state.get_maximal_amount_of_game_tokens():
-        print state.printable_game_matrix()
         return True
     else:
         return False
@@ -59,6 +59,8 @@ def terminal_test(state):
 
 def utility(state):
     if player(state) == 'X' and state.is_victory():
+        if state.game_matrix[1,0] == 'X':
+            print state.printable_game_matrix()
         return -1
     elif player(state) != 'X' and state.is_victory():
         return 1
@@ -66,18 +68,11 @@ def utility(state):
         return 0
 
 ttt_state = TicTacToe(3)
-# # state_deep_two = result(result(ttt_state, (0, 0)), (0, 1))
-# # print state_deep_two.printable_game_matrix()
-# # print actions(state_deep_two)
-# # print terminal_test(state_deep_two)
-# # state_deep_seven = result(result(result(result(result(result(result(ttt_state, (0, 0)), (0, 1)), (0,2)), (1,0)), (1,1)), (1,2)), (2,2))
-#
-state_deep_six = result(result(result(result(result(result(ttt_state, (0, 0)), (0, 1)), (0,2)), (1,0)), (1,2)), (1,1))
-# print state_deep_six.printable_game_matrix()
-# print actions(state_deep_six)
-# print terminal_test(state_deep_six)
-# print utility(state_deep_six)
+#state = result(result(result(result(result(result(ttt_state, (0, 0)), (0, 1)), (0,2)), (1,0)), (2, 2)), (1, 2))
+#state = result(result(result(result(result(result(ttt_state, (0, 0)), (0, 1)), (0,2)), (1,0)), (1, 2)), (2, 0))
+state = result(result(result(result(ttt_state, (2, 1)), (2, 0)), (1, 2)), (0, 0))
 
-print state_deep_six.printable_game_matrix()
-print mini_max_decision(state_deep_six)
-
+print state.printable_game_matrix()
+time_before_funciton_call = time.time()
+print mini_max_decision(state)
+print 'Time in milliseconds: ' + str(int((time.time() - time_before_funciton_call) * 1000))
