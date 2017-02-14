@@ -2,6 +2,7 @@ from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 import sys, time
 from numpy import argmax
 
+count = 1
 
 def alpha_beta_search(state):
     list_of_actions = actions(state)
@@ -13,24 +14,28 @@ def alpha_beta_search(state):
 
 
 def max_value(state, alpha, beta):
+    global count
+    count += 1
     if terminal_test(state):
         return utility(state)
-    usefulness = -sys.maxint
     for a in actions(state):
-        usefulness = max(usefulness, min_value(result(state, a), alpha, beta))
-    return usefulness
+        alpha = max(alpha, min_value(result(state, a), alpha, beta))
+        if alpha >= beta:
+            return beta
+    return alpha
 
 
 def min_value(state, alpha, beta):
+    global count
+    count += 1
     if terminal_test(state):
         return utility(state)
-    usefulness = sys.maxint
     for a in actions(state):
-        usefulness = min(usefulness, max_value(result(state, a), alpha, beta))
-        if usefulness <= alpha:
-            return usefulness
-        beta = min(beta, usefulness)
-    return usefulness
+        beta = min(beta, max_value(result(state, a), alpha, beta))
+        print alpha, beta
+        if beta <= alpha:
+            return alpha
+    return beta
 
 
 def actions(state):
@@ -70,10 +75,11 @@ def utility(state):
 
 ttt_state = TicTacToe(3)
 # state = result(result(result(result(result(result(ttt_state, (0, 0)), (0, 1)), (0,2)), (1,0)), (1,2)), (1,1))
-state = result(result(result(result(ttt_state, (2, 1)), (2, 0)), (1, 2)), (0, 0))
+state = result(result(ttt_state, (1, 1)), (2, 0))
 #state = result(result(ttt_state, (0, 0)), (0, 1))
 print state.printable_game_matrix()
 time_before_funciton_call = time.time()
 print alpha_beta_search(state)
 print 'Time in milliseconds: ' + str(int((time.time() - time_before_funciton_call) * 1000))
+print count
 

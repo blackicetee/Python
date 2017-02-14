@@ -3,6 +3,7 @@ import sys
 import time
 from numpy import argmax
 
+count = 1
 
 def mini_max_decision(state):
     list_of_actions = actions(state)
@@ -14,6 +15,8 @@ def mini_max_decision(state):
 
 
 def max_value(state):
+    global count
+    count += 1
     if terminal_test(state):
         return utility(state)
     usefulness = -sys.maxint
@@ -22,6 +25,8 @@ def max_value(state):
     return usefulness
 
 def min_value(state):
+    global count
+    count += 1
     if terminal_test(state):
         return utility(state)
     usefulness = sys.maxint
@@ -59,8 +64,6 @@ def terminal_test(state):
 
 def utility(state):
     if player(state) == 'X' and state.is_victory():
-        if state.game_matrix[1,0] == 'X':
-            print state.printable_game_matrix()
         return -1
     elif player(state) != 'X' and state.is_victory():
         return 1
@@ -70,9 +73,11 @@ def utility(state):
 ttt_state = TicTacToe(3)
 #state = result(result(result(result(result(result(ttt_state, (0, 0)), (0, 1)), (0,2)), (1,0)), (2, 2)), (1, 2))
 #state = result(result(result(result(result(result(ttt_state, (0, 0)), (0, 1)), (0,2)), (1,0)), (1, 2)), (2, 0))
-state = result(result(result(result(ttt_state, (2, 1)), (2, 0)), (1, 2)), (0, 0))
+#state = result(result(result(result(ttt_state, (2, 1)), (2, 0)), (1, 2)), (0, 0))
+state = result(result(ttt_state, (1, 1)), (2, 0))
 
 print state.printable_game_matrix()
 time_before_funciton_call = time.time()
 print mini_max_decision(state)
 print 'Time in milliseconds: ' + str(int((time.time() - time_before_funciton_call) * 1000))
+print count
