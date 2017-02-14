@@ -6,8 +6,8 @@ from numpy import argmax, argmin
 
 count = 1
 
-#TODO alpha beta is incorrect see AlphaBetaSearch.py is fixed alpha beta algorithm
-class PrincipalVariationSearch:
+# TODO alpha beta is incorrect see AlphaBetaSearch.py is fixed alpha beta algorithm
+class PVSAB:
     SQLITE_DB_NAME = 'pvs_transition_table.db'
 
     def __init__(self, zobrist):
@@ -78,6 +78,12 @@ class PrincipalVariationSearch:
             usefulness = sys.maxint
             list_of_actions = self.actions(state)
             list_of_action_utilities = []
+            # TODO combine this code snipped with transition tables because other alpha beta is wrong
+            # for a in list_of_actions:
+            #     beta = min(beta, self.max_value(self.result(state, a), alpha, beta))
+            #     if beta <= alpha:
+            #         return alpha
+            # return beta
             for a in list_of_actions:
                 list_of_action_utilities.append(min(usefulness, self.max_value(self.result(state, a), alpha, beta)))
                 if usefulness <= alpha:
@@ -132,7 +138,7 @@ class PrincipalVariationSearch:
 # state = result(result(result(result(result(result(ttt_state, (0, 0)), (0, 1)), (0,2)), (1,0)), (1,2)), (1,1))
 ttt_state = TicTacToe(3)
 zobrist_hasing = TicTacToeZobrist()
-pvs = PrincipalVariationSearch(zobrist_hasing)
+pvs = PVSAB(zobrist_hasing)
 # ttt_state = pvs.result(
 #     pvs.result(pvs.result(pvs.result(pvs.result(pvs.result(ttt_state, (2, 1)), (2, 0)), (1, 2)), (0, 0)), (2, 2)),
 #     (1, 1))

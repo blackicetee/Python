@@ -11,7 +11,6 @@ def iterative_deepening(state, aim):
 
 
 def depth_search(state, aim, current_depth, depth_bound):
-    print state.printable_game_matrix()
     if terminal_test(state):
         return utility(state)
     list_of_actions = actions(state)
