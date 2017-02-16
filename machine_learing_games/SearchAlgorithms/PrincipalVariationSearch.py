@@ -97,7 +97,7 @@ class PrincipalVariationSearch:
         return state.get_possible_moves()
 
     def result(self, state, action):
-        copy_state = TicTacToe(3)
+        copy_state = TicTacToe(4)
         copy_state.initialize_game_matrix_with_another_game_matrix(state.game_matrix)
         copy_state.make_move(action)
         return copy_state
@@ -128,37 +128,47 @@ class PrincipalVariationSearch:
         score  = 0
         level_coefficient = state.count_of_game_tokens_in_game()
         score += self.__early_positioning(state)
-        score -= self.__enemy_connections(state)
-        score += self.__own_connections(state)
+        score -= self.__count_pure_connections(state, 'O')
+        score += self.__count_pure_connections(state, 'X')
         return score
 
     def __pick_random_position(self, positions):
         random_agent_move = positions[randint(0, (len(positions) - 1))]
         return random_agent_move
 
-    def __early_positioning(self, state=TicTacToe(4)):
+    def __early_positioning(self, state):
         score = 0
-        level = state.count_of_game_tokens_in_game()
         interesting_early_positions = [(1,1), (1,2), (2,1), (2,2)]
-        if level == 2:
-            for midfields in range(4):
-                if state.game_matrix[interesting_early_positions[midfields]] == 'X':
-                    score += 0.2
-        elif level == 3:
-            for midfields in range(4):
-                if state.game_matrix[interesting_early_positions[midfields]] == 'O':
-                    score -= 0.2
-        #elif level == 4:
-
-        #else:
-
+        x_midfields = [midfield for midfield in interesting_early_positions if state.game_matrix[midfield] == 'X']
+        if len(x_midfields) == 1:
+            score += 0.01
+        elif len(x_midfields) == 2:
+            score += state.count_tokens_in_pure_connection(x_midfields[0], x_midfields[1], 'X') * 0.1
         return score
 
-    def __enemy_connections(self, state):
-        return
-
-    def __own_connections(self, state):
-        return
+    def __count_pure_connections(self, state, player_token):
+        score = 0
+        victory_relevant_connections = {"h0": state.count_tokens_in_pure_connection((0, 0), (0, 1), player_token),
+                                        "h1": state.count_tokens_in_pure_connection((1, 0), (1, 1), player_token),
+                                        "h2": state.count_tokens_in_pure_connection((2, 0), (2, 1), player_token),
+                                        "h3": state.count_tokens_in_pure_connection((3, 0), (3, 1), player_token),
+                                        "v0": state.count_tokens_in_pure_connection((0, 0), (1, 0), player_token),
+                                        "v1": state.count_tokens_in_pure_connection((0, 1), (1, 1), player_token),
+                                        "v2": state.count_tokens_in_pure_connection((0, 2), (1, 2), player_token),
+                                        "v3": state.count_tokens_in_pure_connection((0, 3), (1, 3), player_token),
+                                        "d0": state.count_tokens_in_pure_connection((0, 0), (1, 1), player_token),
+                                        "d1": state.count_tokens_in_pure_connection((3, 0), (2, 1), player_token)}
+        print victory_relevant_connections
+        for value in victory_relevant_connections.itervalues():
+            if value == 1:
+                score += 0.01
+            if value == 2:
+                score += 0.1
+            if value == 3:
+                score += 0.3
+        if self.__calculate_player_turn(state) == player_token:
+            score += score * 2
+        return score
 
     def __calculate_player_turn(self, tictactoe_state=TicTacToe(4)):
         if tictactoe_state.count_of_game_tokens_in_game() % 2 == 0:
@@ -168,17 +178,19 @@ class PrincipalVariationSearch:
 
 
 # state = result(result(result(result(result(result(ttt_state, (0, 0)), (0, 1)), (0,2)), (1,0)), (1,2)), (1,1))
-ttt_state = TicTacToe(3)
+ttt_state = TicTacToe(4)
 zobrist_hasing = TicTacToeZobrist()
 pvs = PrincipalVariationSearch(zobrist_hasing)
 # ttt_state = pvs.result(
 #     pvs.result(pvs.result(pvs.result(pvs.result(pvs.result(ttt_state, (2, 1)), (2, 0)), (1, 2)), (0, 0)), (2, 2)),
 #     (1, 1))
 #ttt_state = pvs.result(pvs.result(pvs.result(pvs.result(ttt_state, (2, 1)), (2, 0)), (1, 2)), (0, 0))
-ttt_state = pvs.result(pvs.result(pvs.result(pvs.result(ttt_state, (1, 1)), (2, 0)), (1, 2)), (0, 0))
+ttt_state = pvs.result(pvs.result(pvs.result(pvs.result(pvs.result(pvs.result(pvs.result(pvs.result(ttt_state, (1, 1)), (2, 0)), (2, 1)), (0, 0)), (0, 1)), (3, 1)), (2, 2)), (1, 0))
 #ttt_state = pvs.result(pvs.result(ttt_state, (1, 1)), (2, 0))
+# print ttt_state.printable_game_matrix()
+# time_before_funciton_call = time.time()
+# print pvs.zobrist_alpha_beta_search(ttt_state)
+# print 'Time in milliseconds: ' + str(int((time.time() - time_before_funciton_call) * 1000))
+# print count
 print ttt_state.printable_game_matrix()
-time_before_funciton_call = time.time()
-print pvs.zobrist_alpha_beta_search(ttt_state)
-print 'Time in milliseconds: ' + str(int((time.time() - time_before_funciton_call) * 1000))
-print count
+print pvs.evaluate(ttt_state)

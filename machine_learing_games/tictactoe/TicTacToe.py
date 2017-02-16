@@ -1,8 +1,5 @@
 import numpy as np
 
-from machine_learing_games.tictactoe import TicTacToeZobrist
-
-
 class TicTacToe:
     """Represents the game TicTacToe and menages the placement of game tokens on the game matrix,
     winning- and loosing conditions and resetting game field values.
