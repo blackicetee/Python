@@ -51,16 +51,20 @@ class TestConnectionAnalysis(unittest.TestCase):
         self.tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz)
 
     def test_get_valid_positions_by_two_positions_1(self):
-        self.assertEqual([(0, 0), (1, 1), (2, 2), (3, 3)], self.tictactoe.get_victory_relevant_positions_by_two_given_positions((0, 0), (1, 1)))
+        self.assertEqual([(0, 0), (1, 1), (2, 2), (3, 3)],
+                         self.tictactoe.get_victory_relevant_positions_by_two_given_positions((0, 0), (1, 1)))
 
     def test_get_valid_positions_by_two_positions_2(self):
-        self.assertEqual([(3, 0), (2, 1), (1, 2), (0, 3)], self.tictactoe.get_victory_relevant_positions_by_two_given_positions((3, 0), (1, 2)))
+        self.assertEqual([(3, 0), (2, 1), (1, 2), (0, 3)],
+                         self.tictactoe.get_victory_relevant_positions_by_two_given_positions((3, 0), (1, 2)))
 
     def test_get_valid_positions_by_two_positions_3(self):
-        self.assertEqual([(1, 0), (1, 1), (1, 2), (1, 3)], self.tictactoe.get_victory_relevant_positions_by_two_given_positions((1, 0), (1, 2)))
+        self.assertEqual([(1, 0), (1, 1), (1, 2), (1, 3)],
+                         self.tictactoe.get_victory_relevant_positions_by_two_given_positions((1, 0), (1, 2)))
 
     def test_get_valid_positions_by_two_positions_4(self):
-        self.assertEqual([(0, 1), (1, 1), (2, 1), (3, 1)], self.tictactoe.get_victory_relevant_positions_by_two_given_positions((2, 1), (0, 1)))
+        self.assertEqual([(0, 1), (1, 1), (2, 1), (3, 1)],
+                         self.tictactoe.get_victory_relevant_positions_by_two_given_positions((2, 1), (0, 1)))
 
     def test_is_connection_pure_1(self):
         self.assertTrue(self.tictactoe.is_connection_pure((0, 3), (1, 3), 'X'))
@@ -96,13 +100,13 @@ class TestConnectionAnalysis(unittest.TestCase):
         tictactoe = TicTacToe(4)
         action_sequence = [(0, 0), (3, 0), (1, 1), (2, 1), (2, 2), (1, 2), (3, 2), (0, 3)]
         tictactoe.initialize_game_matrix_with_action_sequence(action_sequence)
-        self.assertEqual(3, tictactoe.count_tokens_in_pure_connection((0,0), (1,1), 'X'))
+        self.assertEqual(3, tictactoe.count_tokens_in_pure_connection((0, 0), (1, 1), 'X'))
 
     def test_count_tokens_in_pure_connection_2(self):
         tictactoe = TicTacToe(4)
         action_sequence = [(0, 0), (3, 0), (1, 1), (2, 1), (2, 2), (1, 2), (3, 2), (0, 3)]
         tictactoe.initialize_game_matrix_with_action_sequence(action_sequence)
-        self.assertEqual(4, tictactoe.count_tokens_in_pure_connection((3,0), (1,2), 'O'))
+        self.assertEqual(4, tictactoe.count_tokens_in_pure_connection((3, 0), (1, 2), 'O'))
 
     def test_count_tokens_in_pure_connection_3(self):
         tictactoe = TicTacToe(4)
@@ -115,6 +119,44 @@ class TestConnectionAnalysis(unittest.TestCase):
         action_sequence = [(0, 0), (3, 0), (1, 1), (2, 1), (2, 2), (1, 2), (3, 2), (0, 3)]
         tictactoe.initialize_game_matrix_with_action_sequence(action_sequence)
         self.assertEqual(0, tictactoe.count_tokens_in_pure_connection((2, 2), (3, 2), 'X'))
+
+
+class TestUndoMove(unittest.TestCase):
+    def test_undo_move_1(self):
+        tictactoe = TicTacToe(4)
+        action_sequence = [(0, 0), (3, 0), (1, 1), (2, 1), (2, 2), (1, 2), (3, 2), (0, 3)]
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequence)
+        tictactoe.undo_move()
+        expected_game_matrix = np.matrix(
+            [['X', ' ', ' ', ' '], [' ', 'X', 'O', ' '], [' ', 'O', 'X', ' '], ['O', ' ', 'X', ' ']])
+        self.assertTrue((expected_game_matrix == tictactoe.game_matrix).all())
+
+    def test_undo_move_2(self):
+        tictactoe = TicTacToe(4)
+        action_sequence = [(0, 0), (3, 0), (1, 1), (2, 1), (2, 2), (1, 2), (3, 2), (0, 3)]
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequence)
+        tictactoe.undo_move()
+        tictactoe.undo_move()
+        tictactoe.undo_move()
+        tictactoe.undo_move()
+        tictactoe.undo_move()
+        expected_game_matrix = np.matrix(
+            [['X', ' ', ' ', ' '], [' ', 'X', ' ', ' '], [' ', ' ', ' ', ' '], ['O', ' ', ' ', ' ']])
+        self.assertTrue((expected_game_matrix == tictactoe.game_matrix).all())
+
+    def test_undo_move_3(self):
+        tictactoe = TicTacToe(4)
+        tictactoe.make_move((0, 0))
+        tictactoe.make_move((1, 0))
+        tictactoe.make_move((0, 1))
+        tictactoe.make_move((2, 0))
+        tictactoe.make_move((0, 3))
+        tictactoe.undo_move()
+        tictactoe.undo_move()
+        action_sequence = [(0, 0), (1, 0), (0, 1)]
+        expected_tictactoe_game = TicTacToe(4)
+        expected_tictactoe_game.initialize_game_matrix_with_action_sequence(action_sequence)
+        self.assertTrue((expected_tictactoe_game.game_matrix == tictactoe.game_matrix).all())
 
 
 class TestMakeMove(unittest.TestCase):

@@ -26,8 +26,8 @@ def actions(state):
 
 
 def move(state, action):
-    copy_state = TicTacToe(3)
-    copy_state.initialize_game_matrix_with_another_game_matrix(state.game_matrix)
+    copy_state = TicTacToe(4)
+    copy_state.initialize_game_matrix_with_another_game_matrix(state)
     copy_state.make_move(action)
     return copy_state
 
@@ -56,5 +56,6 @@ def utility(state):
     elif state.count_of_game_tokens_in_game() == state.get_maximal_amount_of_game_tokens() and not state.is_victory():
         return 0
 
-ttt = TicTacToe(3)
+ttt = TicTacToe(4)
+print ttt.printable_game_matrix()
 print iterative_deepening(ttt, 1)

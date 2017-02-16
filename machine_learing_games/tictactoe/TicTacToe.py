@@ -40,6 +40,7 @@ class TicTacToe:
     def __init__(self, dimension):
         self.__dimension = dimension
         self.__game_matrix = self.__create_game_matrix(dimension, ' ')
+        self.__action_sequence = []
 
     @property
     def game_matrix(self):
@@ -49,19 +50,36 @@ class TicTacToe:
 
         Returns
         -------
-        game_matrix :   numpy.matrix
+        numpy.matrix
             The game_matrix.
         """
         return self.__game_matrix
 
-    def initialize_game_matrix_with_another_game_matrix(self, another_game_matrix):
+    @property
+    def action_sequence(self):
+        """Is a list of tuples, where every tuple is an action. The list should work like a stack.
+        An action is a valid placement of a player token on the game matrix.
+        If an action is selected and valid then the action should be stored inside the list.
+        The first action is on the "bottom" of the list and every time another action is performed,
+        it will be layered on top of the other actions.
+
+        Returns
+        -------
+        list
+            A list of tuples, where every tuple is an action. The actions are stored chronologically inside the list,
+            from first performed action, to last performed action."""
+        return self.__action_sequence
+
+    def initialize_game_matrix_with_another_game_matrix(self, another_tictactoe_game):
         """Initializes the game matrix property with another game matrix.
+        Careful this functio
 
         Parameters
         ----------
         another_game_matrix : numpy.matrix
             The other game matrix."""
-        self.__game_matrix[:] = another_game_matrix[:]
+        self.__action_sequence = another_tictactoe_game.action_sequence
+        self.__game_matrix[:] = another_tictactoe_game.game_matrix[:]
 
     def initialize_game_matrix_with_action_sequence(self, action_sequence):
         """Initializes the game matrix property with an action sequence.
@@ -228,6 +246,10 @@ class TicTacToe:
                 pure = False
         return pure
 
+    def undo_move(self):
+        last_move = self.__action_sequence.pop()
+        self.__game_matrix[last_move] = ' '
+
     def make_move(self, position):
         """Puts/places a game token at a specified position on the game matrix.
 
@@ -244,8 +266,10 @@ class TicTacToe:
         if self.__is_position_free(position):
             if self.count_of_game_tokens_in_game() % 2 == 0:
                 self.__game_matrix[position] = 'X'
+                self.__action_sequence.append(position)
             elif self.count_of_game_tokens_in_game() % 2 == 1:
                 self.__game_matrix[position] = 'O'
+                self.__action_sequence.append(position)
 
     def get_possible_moves(self):
         """Suggests at which positions a player could place his game token.
