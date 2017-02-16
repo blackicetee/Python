@@ -1,3 +1,5 @@
+from random import randint
+
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 from machine_learing_games.tictactoe.TicTacToeZobrist import TicTacToeZobrist
 from machine_learing_games.SQLite.SQLiteDB import SQLiteDB
@@ -97,7 +99,7 @@ class PrincipalVariationSearch:
     def result(self, state, action):
         copy_state = TicTacToe(3)
         copy_state.initialize_game_matrix_with_another_game_matrix(state.game_matrix)
-        copy_state.put_game_token(self.player(copy_state), action)
+        copy_state.make_move(action)
         return copy_state
 
     def player(self, state):
@@ -122,6 +124,42 @@ class PrincipalVariationSearch:
         elif state.count_of_game_tokens_in_game() == state.get_maximal_amount_of_game_tokens() and not state.is_victory():
             return 0
 
+    def evaluate(self, state):
+        score  = 0
+        level_coefficient = state.count_of_game_tokens_in_game()
+        score += self.__early_positioning(state)
+        score -= self.__enemy_connections(state)
+        score += self.__own_connections(state)
+        return score
+
+    def __pick_random_position(self, positions):
+        random_agent_move = positions[randint(0, (len(positions) - 1))]
+        return random_agent_move
+
+    def __early_positioning(self, state=TicTacToe(4)):
+        score = 0
+        level = state.count_of_game_tokens_in_game()
+        interesting_early_positions = [(1,1), (1,2), (2,1), (2,2)]
+        if level == 2:
+            for midfields in range(4):
+                if state.game_matrix[interesting_early_positions[midfields]] == 'X':
+                    score += 0.2
+        elif level == 3:
+            for midfields in range(4):
+                if state.game_matrix[interesting_early_positions[midfields]] == 'O':
+                    score -= 0.2
+        #elif level == 4:
+
+        #else:
+
+        return score
+
+    def __enemy_connections(self, state):
+        return
+
+    def __own_connections(self, state):
+        return
+
     def __calculate_player_turn(self, tictactoe_state=TicTacToe(4)):
         if tictactoe_state.count_of_game_tokens_in_game() % 2 == 0:
             return 'X'
@@ -137,7 +175,8 @@ pvs = PrincipalVariationSearch(zobrist_hasing)
 #     pvs.result(pvs.result(pvs.result(pvs.result(pvs.result(ttt_state, (2, 1)), (2, 0)), (1, 2)), (0, 0)), (2, 2)),
 #     (1, 1))
 #ttt_state = pvs.result(pvs.result(pvs.result(pvs.result(ttt_state, (2, 1)), (2, 0)), (1, 2)), (0, 0))
-ttt_state = pvs.result(pvs.result(ttt_state, (1, 1)), (2, 0))
+ttt_state = pvs.result(pvs.result(pvs.result(pvs.result(ttt_state, (1, 1)), (2, 0)), (1, 2)), (0, 0))
+#ttt_state = pvs.result(pvs.result(ttt_state, (1, 1)), (2, 0))
 print ttt_state.printable_game_matrix()
 time_before_funciton_call = time.time()
 print pvs.zobrist_alpha_beta_search(ttt_state)

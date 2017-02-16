@@ -44,7 +44,7 @@ class EasyTicTacToeAgent:
 
     def __calculate_enemy_move(self, new_state=TicTacToe(4)):
         if self.__ply != ():
-            self.__tictactoe.put_game_token('X', self.__ply)
+            self.__tictactoe.make_move(self.__ply)
             zobrist_hash = self.__zobrist_hashing.get_hash(self.__tictactoe.game_matrix)
             use_value = 0
             alpha_beta_window = 0
@@ -53,7 +53,7 @@ class EasyTicTacToeAgent:
             player_turn = self.__calculate_player_turn(self.__tictactoe)
             self.__agent_experience_db.insert_agent_experience(zobrist_hash, use_value, alpha_beta_window,
                                                                str(list(ply[0])), depth, player_turn)
-            self.__tictactoe.put_game_token('O', list(ply)[0])
+            self.__tictactoe.make_move(list(ply)[0])
 
     def __calculate_last_player_turn(self, tictactoe_state=TicTacToe(4)):
         if tictactoe_state.count_of_game_tokens_in_game() % 2 == 0:

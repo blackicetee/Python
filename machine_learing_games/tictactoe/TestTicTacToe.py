@@ -18,7 +18,7 @@ class TestInitializeTicTacToe(unittest.TestCase):
         action_sequenz = [(0, 0), (3, 2), (0, 3), (1, 0), (1, 3), (2, 0), (3, 0), (0, 2), (3, 1), (2, 2), (2, 1),
                           (1, 1), (0, 1), (1, 2)]
         tictactoe = TicTacToe(4)
-        tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz, 'X')
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz)
         expected_game_matrix = np.matrix([['X', 'X', 'O', 'X'],
                                           ['O', 'O', 'O', 'X'],
                                           ['O', 'X', 'O', ' '],
@@ -31,59 +31,121 @@ class TestPrintableGameMatrix(unittest.TestCase):
         action_sequenz = [(0, 0), (3, 2), (0, 3), (1, 0), (1, 3), (2, 0), (3, 0), (0, 2), (3, 1), (2, 2), (2, 1),
                           (1, 1), (0, 1), (1, 2)]
         tictactoe = TicTacToe(4)
-        tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz, 'X')
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz)
         test_game_matrix_string = 'X | X | O | X\n-------------\nO | O | O | X\n-------------\nO | X | O |  \n-------------\nX | X | O |  \n'
         self.assertEqual(tictactoe.printable_game_matrix(), test_game_matrix_string)
 
     def test_three_times_three_printable_game_matrix(self):
         action_sequenz = [(0, 0), (1, 0), (2, 0), (0, 2), (2, 2), (2, 1), (1, 1), (0, 1), (1, 2)]
         tictactoe = TicTacToe(3)
-        tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz, 'X')
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz)
         test_game_matrix_string = 'X | O | O\n---------\nO | X | X\n---------\nX | O | X\n'
         self.assertEqual(tictactoe.printable_game_matrix(), test_game_matrix_string)
 
 
-class TestPutGameToken(unittest.TestCase):
+class TestConnectionAnalysis(unittest.TestCase):
+    def setUp(self):
+        self.tictactoe = TicTacToe(4)
+        action_sequenz = [(0, 0), (3, 2), (0, 3), (1, 0), (1, 3), (2, 0), (3, 0), (0, 2), (3, 1), (2, 2), (2, 1),
+                          (1, 1), (0, 1), (1, 2)]
+        self.tictactoe.initialize_game_matrix_with_action_sequence(action_sequenz)
+
+    def test_get_valid_positions_by_two_positions_1(self):
+        self.assertEqual([(0, 0), (1, 1), (2, 2), (3, 3)], self.tictactoe.get_victory_relevant_positions_by_two_given_positions((0, 0), (1, 1)))
+
+    def test_get_valid_positions_by_two_positions_2(self):
+        self.assertEqual([(3, 0), (2, 1), (1, 2), (0, 3)], self.tictactoe.get_victory_relevant_positions_by_two_given_positions((3, 0), (1, 2)))
+
+    def test_get_valid_positions_by_two_positions_3(self):
+        self.assertEqual([(1, 0), (1, 1), (1, 2), (1, 3)], self.tictactoe.get_victory_relevant_positions_by_two_given_positions((1, 0), (1, 2)))
+
+    def test_get_valid_positions_by_two_positions_4(self):
+        self.assertEqual([(0, 1), (1, 1), (2, 1), (3, 1)], self.tictactoe.get_victory_relevant_positions_by_two_given_positions((2, 1), (0, 1)))
+
+    def test_is_connection_pure_1(self):
+        self.assertTrue(self.tictactoe.is_connection_pure((0, 3), (1, 3), 'X'))
+
+    def test_is_connection_pure_2(self):
+        self.assertTrue(self.tictactoe.is_connection_pure((0, 3), (3, 3), 'X'))
+
+    def test_is_connection_pure_3(self):
+        self.assertFalse(self.tictactoe.is_connection_pure((1, 1), (1, 2), 'O'))
+
+    def test_is_connection_pure_4(self):
+        self.assertFalse(self.tictactoe.is_connection_pure((1, 1), (1, 2), 'X'))
+
+    def test_is_connection_pure_5(self):
+        self.assertTrue(self.tictactoe.is_connection_pure((1, 2), (3, 2), 'O'))
+
+    def test_is_connection_pure_6(self):
+        self.assertFalse(self.tictactoe.is_connection_pure((1, 1), (2, 2), 'O'))
+
+    def test_is_connection_pure_7(self):
+        tictactoe = TicTacToe(4)
+        action_sequence = [(0, 0), (3, 0), (1, 1), (2, 1), (2, 2), (1, 2), (3, 3)]
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequence)
+        self.assertTrue(tictactoe.is_connection_pure((1, 1), (2, 2), 'X'))
+
+    def test_is_connection_pure_8(self):
+        tictactoe = TicTacToe(4)
+        action_sequence = [(0, 0), (3, 0), (1, 1), (2, 1), (2, 2), (1, 2), (3, 2), (0, 3)]
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequence)
+        self.assertTrue(tictactoe.is_connection_pure((3, 0), (1, 2), 'O'))
+
+    def test_count_tokens_in_pure_connection_1(self):
+        tictactoe = TicTacToe(4)
+        action_sequence = [(0, 0), (3, 0), (1, 1), (2, 1), (2, 2), (1, 2), (3, 2), (0, 3)]
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequence)
+        self.assertEqual(3, tictactoe.count_tokens_in_pure_connection((0,0), (1,1), 'X'))
+
+    def test_count_tokens_in_pure_connection_2(self):
+        tictactoe = TicTacToe(4)
+        action_sequence = [(0, 0), (3, 0), (1, 1), (2, 1), (2, 2), (1, 2), (3, 2), (0, 3)]
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequence)
+        self.assertEqual(4, tictactoe.count_tokens_in_pure_connection((3,0), (1,2), 'O'))
+
+    def test_count_tokens_in_pure_connection_3(self):
+        tictactoe = TicTacToe(4)
+        action_sequence = [(0, 0), (3, 0), (1, 1), (2, 1), (2, 2), (1, 2), (3, 2), (0, 3)]
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequence)
+        self.assertEqual(0, tictactoe.count_tokens_in_pure_connection((0, 0), (3, 0), 'O'))
+
+    def test_count_tokens_in_pure_connection_4(self):
+        tictactoe = TicTacToe(4)
+        action_sequence = [(0, 0), (3, 0), (1, 1), (2, 1), (2, 2), (1, 2), (3, 2), (0, 3)]
+        tictactoe.initialize_game_matrix_with_action_sequence(action_sequence)
+        self.assertEqual(0, tictactoe.count_tokens_in_pure_connection((2, 2), (3, 2), 'X'))
+
+
+class TestMakeMove(unittest.TestCase):
     def setUp(self):
         self.ticTacToe = TicTacToe(4)
         self.example_ticTacToe_game = TicTacToe(4)
-        self.example_ticTacToe_game.put_game_token('X', (0, 0))
-        self.example_ticTacToe_game.put_game_token('O', (3, 3))
-        self.example_ticTacToe_game.put_game_token('X', (0, 1))
-        self.example_ticTacToe_game.put_game_token('O', (2, 2))
-        self.example_ticTacToe_game.put_game_token('X', (0, 2))
-        self.example_ticTacToe_game.put_game_token('O', (1, 1))
-        self.example_ticTacToe_game.put_game_token('X', (0, 3))
-
-    def test_invalid_game_tokens_or_positions(self):
-        tictactoe = TicTacToe(4)
-        test_matrix = np.matrix([[' ', ' ', ' ', ' '],
-                                 [' ', ' ', ' ', ' '],
-                                 [' ', ' ', ' ', ' '],
-                                 [' ', ' ', ' ', ' ']])
-        tictactoe.put_game_token('c', (0, 0))
-        tictactoe.put_game_token('Z', (1, 0))
-        tictactoe.put_game_token(7, (2, 0))
-        tictactoe.put_game_token('X', (4, 4))
-        self.assertTrue((tictactoe.game_matrix == test_matrix).all())
+        self.example_ticTacToe_game.make_move((0, 0))
+        self.example_ticTacToe_game.make_move((3, 3))
+        self.example_ticTacToe_game.make_move((0, 1))
+        self.example_ticTacToe_game.make_move((2, 2))
+        self.example_ticTacToe_game.make_move((0, 2))
+        self.example_ticTacToe_game.make_move((1, 1))
+        self.example_ticTacToe_game.make_move((0, 3))
 
     def test_put_seven_game_tokens(self):
-        self.ticTacToe.put_game_token('X', (0, 0))
-        self.ticTacToe.put_game_token('O', (3, 3))
-        self.ticTacToe.put_game_token('X', (0, 1))
-        self.ticTacToe.put_game_token('O', (2, 2))
-        self.ticTacToe.put_game_token('X', (0, 2))
-        self.ticTacToe.put_game_token('O', (1, 1))
-        self.ticTacToe.put_game_token('X', (0, 3))
+        self.ticTacToe.make_move((0, 0))
+        self.ticTacToe.make_move((3, 3))
+        self.ticTacToe.make_move((0, 1))
+        self.ticTacToe.make_move((2, 2))
+        self.ticTacToe.make_move((0, 2))
+        self.ticTacToe.make_move((1, 1))
+        self.ticTacToe.make_move((0, 3))
         equality_matrix = self.example_ticTacToe_game.game_matrix == self.ticTacToe.game_matrix
         self.assertTrue(equality_matrix.all())
 
     def test_if_value_not_changes_when_position_is_taken(self):
         copy_example_ticTacToe_game = self.example_ticTacToe_game
-        copy_example_ticTacToe_game.put_game_token('X', (0, 0))
-        copy_example_ticTacToe_game.put_game_token('O', (3, 3))
-        copy_example_ticTacToe_game.put_game_token('O', (0, 1))
-        copy_example_ticTacToe_game.put_game_token('X', (2, 2))
+        copy_example_ticTacToe_game.make_move((0, 0))
+        copy_example_ticTacToe_game.make_move((3, 3))
+        copy_example_ticTacToe_game.make_move((0, 1))
+        copy_example_ticTacToe_game.make_move((2, 2))
         self.assertTrue((copy_example_ticTacToe_game.game_matrix == self.example_ticTacToe_game.game_matrix).all())
 
 
@@ -96,44 +158,44 @@ class TestPossibleMoves(unittest.TestCase):
 
     def test_10_possible_moves(self):
         tictactoe = TicTacToe(4)
-        tictactoe.put_game_token('X', (0, 0))
-        tictactoe.put_game_token('O', (0, 1))
-        tictactoe.put_game_token('X', (0, 2))
-        tictactoe.put_game_token('O', (0, 3))
-        tictactoe.put_game_token('X', (1, 0))
-        tictactoe.put_game_token('O', (2, 0))
+        tictactoe.make_move((0, 0))
+        tictactoe.make_move((0, 1))
+        tictactoe.make_move((0, 2))
+        tictactoe.make_move((0, 3))
+        tictactoe.make_move((1, 0))
+        tictactoe.make_move((2, 0))
         self.assertEqual(
             [(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3), (3, 0), (3, 1), (3, 2), (3, 3)],
             tictactoe.get_possible_moves())
 
     def test_5_possible_moves(self):
         tictactoe = TicTacToe(4)
-        tictactoe.put_game_token('X', (0, 0))
-        tictactoe.put_game_token('O', (0, 1))
-        tictactoe.put_game_token('X', (0, 2))
-        tictactoe.put_game_token('O', (0, 3))
-        tictactoe.put_game_token('X', (1, 0))
-        tictactoe.put_game_token('O', (2, 0))
-        tictactoe.put_game_token('X', (3, 0))
-        tictactoe.put_game_token('O', (1, 1))
-        tictactoe.put_game_token('X', (1, 2))
-        tictactoe.put_game_token('O', (2, 1))
-        tictactoe.put_game_token('X', (2, 2))
+        tictactoe.make_move((0, 0))
+        tictactoe.make_move((0, 1))
+        tictactoe.make_move((0, 2))
+        tictactoe.make_move((0, 3))
+        tictactoe.make_move((1, 0))
+        tictactoe.make_move((2, 0))
+        tictactoe.make_move((3, 0))
+        tictactoe.make_move((1, 1))
+        tictactoe.make_move((1, 2))
+        tictactoe.make_move((2, 1))
+        tictactoe.make_move((2, 2))
         self.assertEqual([(1, 3), (2, 3), (3, 1), (3, 2), (3, 3)], tictactoe.get_possible_moves())
 
 
 class TestHorizontalVictory(unittest.TestCase):
     def setUp(self):
         self.example_ticTacToe_game = TicTacToe(4)
-        self.example_ticTacToe_game.put_game_token('X', (2, 0))
-        self.example_ticTacToe_game.put_game_token('O', (3, 3))
-        self.example_ticTacToe_game.put_game_token('X', (2, 1))
-        self.example_ticTacToe_game.put_game_token('O', (1, 1))
-        self.example_ticTacToe_game.put_game_token('X', (2, 2))
-        self.example_ticTacToe_game.put_game_token('O', (0, 0))
+        self.example_ticTacToe_game.make_move((2, 0))
+        self.example_ticTacToe_game.make_move((3, 3))
+        self.example_ticTacToe_game.make_move((2, 1))
+        self.example_ticTacToe_game.make_move((1, 1))
+        self.example_ticTacToe_game.make_move((2, 2))
+        self.example_ticTacToe_game.make_move((0, 0))
 
     def test_horizontal_victory(self):
-        self.example_ticTacToe_game.put_game_token('X', (2, 3))
+        self.example_ticTacToe_game.make_move((2, 3))
         self.assertTrue(self.example_ticTacToe_game.is_horizontal_victory())
 
     def test_no_horizontal_victory(self):
@@ -143,15 +205,15 @@ class TestHorizontalVictory(unittest.TestCase):
 class TestVerticalVictory(unittest.TestCase):
     def setUp(self):
         self.example_ticTacToe_game = TicTacToe(4)
-        self.example_ticTacToe_game.put_game_token('X', (0, 0))
-        self.example_ticTacToe_game.put_game_token('O', (3, 3))
-        self.example_ticTacToe_game.put_game_token('X', (1, 0))
-        self.example_ticTacToe_game.put_game_token('O', (2, 3))
-        self.example_ticTacToe_game.put_game_token('X', (2, 0))
-        self.example_ticTacToe_game.put_game_token('O', (1, 3))
+        self.example_ticTacToe_game.make_move((0, 0))
+        self.example_ticTacToe_game.make_move((3, 3))
+        self.example_ticTacToe_game.make_move((1, 0))
+        self.example_ticTacToe_game.make_move((2, 3))
+        self.example_ticTacToe_game.make_move((2, 0))
+        self.example_ticTacToe_game.make_move((1, 3))
 
     def test_vertical_victory(self):
-        self.example_ticTacToe_game.put_game_token('X', (3, 0))
+        self.example_ticTacToe_game.make_move((3, 0))
         self.assertTrue(self.example_ticTacToe_game.is_vertical_victory())
 
     def test_no_vertical_victory(self):
@@ -161,26 +223,26 @@ class TestVerticalVictory(unittest.TestCase):
 class TestDiagonalVictory(unittest.TestCase):
     def setUp(self):
         self.example_ticTacToe_game = TicTacToe(4)
-        self.example_ticTacToe_game.put_game_token('X', (0, 0))
-        self.example_ticTacToe_game.put_game_token('O', (3, 0))
-        self.example_ticTacToe_game.put_game_token('X', (1, 1))
-        self.example_ticTacToe_game.put_game_token('O', (3, 1))
-        self.example_ticTacToe_game.put_game_token('X', (2, 2))
-        self.example_ticTacToe_game.put_game_token('O', (3, 2))
+        self.example_ticTacToe_game.make_move((0, 0))
+        self.example_ticTacToe_game.make_move((3, 0))
+        self.example_ticTacToe_game.make_move((1, 1))
+        self.example_ticTacToe_game.make_move((3, 1))
+        self.example_ticTacToe_game.make_move((2, 2))
+        self.example_ticTacToe_game.make_move((3, 2))
 
     def test_diagonal_victory_top_left_to_bottom_right(self):
-        self.example_ticTacToe_game.put_game_token('X', (3, 3))
+        self.example_ticTacToe_game.make_move((3, 3))
         self.assertTrue(self.example_ticTacToe_game.is_diagonal_victory())
 
     def test_digital_victory_top_right_to_bottom_left(self):
         example_tictactoe = TicTacToe(4)
-        example_tictactoe.put_game_token('X', (0, 3))
-        example_tictactoe.put_game_token('O', (0, 0))
-        example_tictactoe.put_game_token('X', (1, 2))
-        example_tictactoe.put_game_token('O', (1, 0))
-        example_tictactoe.put_game_token('X', (2, 1))
-        example_tictactoe.put_game_token('O', (2, 0))
-        example_tictactoe.put_game_token('X', (3, 0))
+        example_tictactoe.make_move((0, 3))
+        example_tictactoe.make_move((0, 0))
+        example_tictactoe.make_move((1, 2))
+        example_tictactoe.make_move((1, 0))
+        example_tictactoe.make_move((2, 1))
+        example_tictactoe.make_move((2, 0))
+        example_tictactoe.make_move((3, 0))
         self.assertTrue(example_tictactoe.is_diagonal_victory())
 
     def test_no_digital_victory(self):
@@ -190,32 +252,32 @@ class TestDiagonalVictory(unittest.TestCase):
 class TestVictory(unittest.TestCase):
     def setUp(self):
         self.example_ticTacToe_game = TicTacToe(4)
-        self.example_ticTacToe_game.put_game_token('X', (0, 0))
-        self.example_ticTacToe_game.put_game_token('O', (0, 1))
-        self.example_ticTacToe_game.put_game_token('X', (0, 2))
-        self.example_ticTacToe_game.put_game_token('O', (0, 3))
-        self.example_ticTacToe_game.put_game_token('X', (1, 0))
-        self.example_ticTacToe_game.put_game_token('O', (2, 0))
-        self.example_ticTacToe_game.put_game_token('X', (1, 1))
-        self.example_ticTacToe_game.put_game_token('O', (2, 1))
-        self.example_ticTacToe_game.put_game_token('X', (1, 2))
-        self.example_ticTacToe_game.put_game_token('O', (3, 0))
-        self.example_ticTacToe_game.put_game_token('X', (2, 2))
-        self.example_ticTacToe_game.put_game_token('O', (3, 1))
+        self.example_ticTacToe_game.make_move((0, 0))
+        self.example_ticTacToe_game.make_move((0, 1))
+        self.example_ticTacToe_game.make_move((0, 2))
+        self.example_ticTacToe_game.make_move((0, 3))
+        self.example_ticTacToe_game.make_move((1, 0))
+        self.example_ticTacToe_game.make_move((2, 0))
+        self.example_ticTacToe_game.make_move((1, 1))
+        self.example_ticTacToe_game.make_move((2, 1))
+        self.example_ticTacToe_game.make_move((1, 2))
+        self.example_ticTacToe_game.make_move((3, 0))
+        self.example_ticTacToe_game.make_move((2, 2))
+        self.example_ticTacToe_game.make_move((3, 1))
 
     def test_no_victory(self):
         self.assertFalse(self.example_ticTacToe_game.is_victory())
 
     def test_only_horizontal_victory(self):
-        self.example_ticTacToe_game.put_game_token('X', (1, 3))
+        self.example_ticTacToe_game.make_move((1, 3))
         self.assertTrue(self.example_ticTacToe_game.is_victory())
 
     def test_only_vertical_victory(self):
-        self.example_ticTacToe_game.put_game_token('X', (3, 2))
+        self.example_ticTacToe_game.make_move((3, 2))
         self.assertTrue(self.example_ticTacToe_game.is_victory())
 
     def test_only_diagonal_victory(self):
-        self.example_ticTacToe_game.put_game_token('X', (3, 3))
+        self.example_ticTacToe_game.make_move((3, 3))
         self.assertTrue(self.example_ticTacToe_game.is_victory())
 
 
@@ -224,7 +286,7 @@ def suite():
     of all test cases in this test module"""
     suite1 = unittest.TestLoader().loadTestsFromTestCase(TestInitializeTicTacToe)
     suite2 = unittest.TestLoader().loadTestsFromTestCase(TestPrintableGameMatrix)
-    suite3 = unittest.TestLoader().loadTestsFromTestCase(TestPutGameToken)
+    suite3 = unittest.TestLoader().loadTestsFromTestCase(TestMakeMove)
     suite4 = unittest.TestLoader().loadTestsFromTestCase(TestPossibleMoves)
     suite5 = unittest.TestLoader().loadTestsFromTestCase(TestHorizontalVictory)
     suite6 = unittest.TestLoader().loadTestsFromTestCase(TestVerticalVictory)

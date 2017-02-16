@@ -58,23 +58,37 @@ class TicTacToe:
         return self.__game_matrix
 
     def initialize_game_matrix_with_another_game_matrix(self, another_game_matrix):
+        """Initializes the game matrix property with another game matrix.
+
+        Parameters
+        ----------
+        another_game_matrix : numpy.matrix
+            The other game matrix."""
         self.__game_matrix[:] = another_game_matrix[:]
 
-    def initialize_game_matrix_with_action_sequence(self, action_sequence, starting_player_token):
+    def initialize_game_matrix_with_action_sequence(self, action_sequence):
+        """Initializes the game matrix property with an action sequence.
+
+        Parameters
+        ----------
+        action_sequence : list
+            The action sequence is a list of tuples.
+            Every tuple specifies a position at the game matrix property.
+            Tuple element one is the row and tuple element two is the column of the game matrix."""
         if len(action_sequence) <= (self.__dimension * self.__dimension):
             self.__init__(self.__dimension)
-            actions_processed = 0
             for action in action_sequence:
-                if actions_processed % 2 == 0:
-                    self.put_game_token(starting_player_token, action)
-                    actions_processed += 1
-                else:
-                    game_token_type = self.__get_opposite_game_token_type(starting_player_token)
-                    if game_token_type is not None:
-                        self.put_game_token(str(game_token_type), action)
-                        actions_processed += 1
+                self.make_move(action)
 
     def printable_game_matrix(self):
+        """Returns a good looking string representation of the game matrix property.
+        This function is just for better human readability of the game matrix.
+
+        Returns
+        -------
+        str
+            An for human readability optimized string,
+            which represents the current state of the game matrix property."""
         print_string = ''
         for row in range(self.__dimension):
             for col in range(self.__dimension):
@@ -87,6 +101,12 @@ class TicTacToe:
         return print_string
 
     def count_of_game_tokens_in_game(self):
+        """Counts how much game tokens are currently inside the game matrix property.
+
+        Returns
+        -------
+        int
+            Count of game tokens inside the game matrix property."""
         count = 0
         for row in range(self.__dimension):
             for col in range(self.__dimension):
@@ -95,9 +115,123 @@ class TicTacToe:
         return count
 
     def get_maximal_amount_of_game_tokens(self):
-        return (self.__dimension * self.__dimension)
+        """Returns how much fields the game board will have,
+         according to initialized dimensionality when the object is created.
 
-    def put_game_token(self, game_token, position):
+         Returns
+         -------
+         int
+            The maximal amount of game tokens,
+            which can be placed inside the game matrix property."""
+        return self.__dimension * self.__dimension
+
+    def count_tokens_in_pure_connection(self, x_position, y_position, player_token):
+        """Counts game tokens from a player inside a connection of two positions but only if the connection is pure.
+        For more information about what a pure connection is
+        or what a connection of two positions is,
+        please read the description of function 'is_connection_pure(...)'.
+
+        Parameters
+        ----------
+        x_position : tuple
+            Specifies the position of point one inside the game matrix property.
+
+        y_position : tuple
+            Specifies the position of point two inside the game matrix property.
+
+        player_token : str
+            Is either an 'X' or an 'O' and specifies which player tokens should be counted.
+
+        Returns
+        -------
+        int
+            The amount of game tokens of one player, which are in a pure connection of two points.
+            Will always return zero if the connection is not pure or
+            if no valid connection of those two points can be created."""
+        count = 0
+        victory_relevant_positions = self.get_victory_relevant_positions_by_two_given_positions(x_position, y_position)
+        if self.is_connection_pure(x_position, y_position, player_token):
+            for position in victory_relevant_positions:
+                if self.__game_matrix[position] == player_token:
+                    count += 1
+        return count
+
+    def get_victory_relevant_positions_by_two_given_positions(self, x_position, y_position):
+        """Returns a list of tuples, according to two given position points,
+         where every tuple specifies a victory relevant position.
+         The two position points define if the relevant positions are ordered in a horizontal,
+         vertical or diagonal line.
+         Victory relevant means, if every horizontal, vertical or diagonal field is filled with game tokens of one player,
+         then this player will win the Tic Tac Toe game.
+
+        Parameters
+        ----------
+        x_position : tuple
+            Specifies the position of point one inside the game matrix property.
+
+        y_position : tuple
+            Specifies the position of point two inside the game matrix property.
+
+        Returns
+        -------
+        list
+            A list of positions(tuples), these list depends on the input position point .
+            The list is empty if the input positions are in no horizontal, vertical or diagonal relation to one another.
+
+         """
+        victory_relevant_positions = []
+        if x_position[0] == y_position[0] and x_position[1] != y_position[1]:
+            for d in range(self.__dimension):
+                victory_relevant_positions.append((x_position[0], d))
+        elif x_position[0] != y_position[0] and x_position[1] == y_position[1]:
+            for d in range(self.__dimension):
+                victory_relevant_positions.append((d, x_position[1]))
+        elif x_position[0] == x_position[1] and y_position[0] == y_position[1]:
+            for d in range(self.__dimension):
+                victory_relevant_positions.append((d, d))
+        elif x_position == ((self.__dimension - 1) - x_position[1], (self.__dimension - 1) - x_position[0]) and y_position == ((self.__dimension - 1) - y_position[1], (self.__dimension - 1) - y_position[0]):
+            for d in range(self.__dimension):
+                victory_relevant_positions.append(((self.__dimension - 1) - d, d))
+        return victory_relevant_positions
+
+    def is_connection_pure(self, x_position, y_position, player_token):
+        """Checks if a connection is pure.
+        A pure connection is a horizontal, vertical or diagonal line which only contains empty game matrix fields or
+        fields which contain the specified player tokens. If an enemy player token is found within the connection,
+        then the counting is cancelled and will return always zero.
+        A connection is like a linear line,
+        where the length of this line is equal to the dimension of the game matrix property.
+        If the two given position points are not inside of one of the possible linear lines,
+        then the position points are invalid and will not be considered.
+
+        Parameters
+        ----------
+        x_position : tuple
+            Specifies the position of point one inside the game matrix property.
+
+        y_position : tuple
+            Specifies the position of point two inside the game matrix property.
+
+        player_token : str
+            Is either an 'X' or an 'O' and specifies which player tokens should be counted.
+
+        Returns
+        -------
+        bool
+            True if the connection is pure
+            and the two input positions are in a horizontal, vertical or diagonal relation.
+            False if not.
+            Additionally:
+                A horizontal relation means, the two input positions are in the same row of the game matrix property.
+        """
+        pure = True
+        victory_relevant_positions = self.get_victory_relevant_positions_by_two_given_positions(x_position, y_position)
+        for position in victory_relevant_positions:
+            if self.game_matrix[position] != ' ' and self.game_matrix[position] != player_token:
+                pure = False
+        return pure
+
+    def make_move(self, position):
         """Puts/places a game token at a specified position on the game matrix.
 
         Parameters
@@ -110,9 +244,11 @@ class TicTacToe:
         position :  tuple
             A tuple of coordinates which specifies the position, where to put the game token, on the game matrix.
         """
-        if self.__is_correct_game_token_type(game_token):
-            if self.__is_position_free(position):
-                self.__game_matrix[position[0], position[1]] = game_token
+        if self.__is_position_free(position):
+            if self.count_of_game_tokens_in_game() % 2 == 0:
+                self.__game_matrix[position] = 'X'
+            elif self.count_of_game_tokens_in_game() % 2 == 1:
+                self.__game_matrix[position] = 'O'
 
     def get_possible_moves(self):
         """Suggests at which positions a player could place his game token.

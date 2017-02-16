@@ -28,7 +28,7 @@ def actions(state):
 def move(state, action):
     copy_state = TicTacToe(3)
     copy_state.initialize_game_matrix_with_another_game_matrix(state.game_matrix)
-    copy_state.put_game_token(player(copy_state), action)
+    copy_state.make_move(action)
     return copy_state
 
 

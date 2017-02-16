@@ -15,9 +15,9 @@ def create_random_tictactoe_training_example():
         random_action = randint(0, (len(actions) - 1))
         action_sequence.append(actions[random_action])
         if (round_count % 2) == 0:
-            tictactoe.put_game_token('X', actions[random_action])
+            tictactoe.make_move(actions[random_action])
         else:
-            tictactoe.put_game_token('O', actions[random_action])
+            tictactoe.make_move(actions[random_action])
 
         if round_count == 15 and not tictactoe.is_victory():
             target_value = 'draw'

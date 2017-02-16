@@ -32,7 +32,7 @@ class TicTacToeEnvironment:
         if self.__game_result == '':
             self.__round_count += 1
             agent_move = self.__easy_tictactoe_agent.action()
-            self.__tictactoe.put_game_token('X', agent_move)
+            self.__tictactoe.make_move(agent_move)
             self.evaluate_game_result()
 
 
@@ -57,7 +57,7 @@ class TicTacToeEnvironment:
         if self.__game_result == '':
             self.__round_count += 1
             agent_move = self.get_move_from_tictactoe_decision_tree_agent()
-            self.__tictactoe.put_game_token('X', agent_move)
+            self.__tictactoe.make_move(agent_move)
             self.evaluate_game_result()
 
 
@@ -70,7 +70,7 @@ class TicTacToeEnvironment:
         if self.__game_result == '':
             self.__round_count += 1
             random_agent_move = self.get_move_from_tictactoe_random_agent()
-            self.__tictactoe.put_game_token('O', random_agent_move)
+            self.__tictactoe.make_move(random_agent_move)
             self.evaluate_game_result()
 
     def get_move_from_tictactoe_random_agent(self):

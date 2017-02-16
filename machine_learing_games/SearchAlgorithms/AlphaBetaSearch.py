@@ -1,6 +1,6 @@
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 import sys, time
-from numpy import argmax
+from numpy import argmax, argmin
 
 count = 1
 
@@ -8,8 +8,11 @@ def alpha_beta_search(state):
     list_of_actions = actions(state)
     list_of_action_utilities = []
     for action in list_of_actions:
-        list_of_action_utilities.append(min_value(result(state, action), -sys.maxint, sys.maxint))
-    best_action_index = argmax(list_of_action_utilities)
+        list_of_action_utilities.append(max_value(result(state, action), -sys.maxint, sys.maxint))
+    if player(state) == 'X':
+        best_action_index = argmax(list_of_action_utilities)
+    else:
+        best_action_index = argmin(list_of_action_utilities)
     return list_of_actions[best_action_index], list_of_action_utilities[best_action_index]
 
 
@@ -32,7 +35,6 @@ def min_value(state, alpha, beta):
         return utility(state)
     for a in actions(state):
         beta = min(beta, max_value(result(state, a), alpha, beta))
-        print alpha, beta
         if beta <= alpha:
             return alpha
     return beta
@@ -45,7 +47,7 @@ def actions(state):
 def result(state, action):
     copy_state = TicTacToe(3)
     copy_state.initialize_game_matrix_with_another_game_matrix(state.game_matrix)
-    copy_state.put_game_token(player(copy_state), action)
+    copy_state.make_move(action)
     return copy_state
 
 
@@ -73,10 +75,16 @@ def utility(state):
     elif state.count_of_game_tokens_in_game() == state.get_maximal_amount_of_game_tokens() and not state.is_victory():
         return 0
 
-ttt_state = TicTacToe(3)
+state = TicTacToe(3)
 # state = result(result(result(result(result(result(ttt_state, (0, 0)), (0, 1)), (0,2)), (1,0)), (1,2)), (1,1))
-state = result(result(ttt_state, (1, 1)), (2, 0))
-#state = result(result(ttt_state, (0, 0)), (0, 1))
+#state = result(result(ttt_state, (1, 1)), (2, 0))
+#state = result(result(state, (0, 0)), (0, 1))
+#state = result(result(result(state, (0, 0)), (0, 1)), (1, 0))
+#state = result(result(result(result(state, (0, 0)), (0, 1)), (1, 0)), (2, 0))
+#state = result(state, (1, 1))
+#state = result(result(state, (1, 1)), (0, 0))
+#state = result(result(result(state, (1, 1)), (0, 0)), (0, 1))
+state = result(result(result(result(result(state, (1, 1)), (0, 0)), (0, 1)), (2, 1)), (1, 2))
 print state.printable_game_matrix()
 time_before_funciton_call = time.time()
 print alpha_beta_search(state)
