@@ -3,14 +3,14 @@ import sys, time
 from numpy import argmax, argmin
 
 count = 1
+count_ab_cuts = 0
 
-def alpha_beta_iterative_deepening_search(state=TicTacToe(4)):
+def alpha_beta_iterative_deepening_search(state):
     list_of_action_utilities = []
-    action_list = iterative_deepening(state, 1)
-    #print action_list[0][1].game_matrix
+    action_list = actions(state)
     for action in action_list:
         state.make_move(action)
-        list_of_action_utilities.append(max_value(state, -sys.maxint, sys.maxint))
+        list_of_action_utilities.append(max_value(state, -sys.maxint, sys.maxint, 0, 3))
         state.undo_move()
     if player(state) == 'X':
         best_action_index = argmax(list_of_action_utilities)
@@ -19,33 +19,48 @@ def alpha_beta_iterative_deepening_search(state=TicTacToe(4)):
     return action_list[best_action_index], list_of_action_utilities[best_action_index]
 
 
-def max_value(state, alpha, beta):
-    global count
+def max_value(state, alpha, beta, depth, depth_bound):
+    global count, count_ab_cuts
     count += 1
-    if terminal_test(state):
+    if cutoff_test(state, depth, depth_bound):
         return evaluate(state)
     for a in actions(state):
         state.make_move(a)
-        alpha = max(alpha, min_value(state, alpha, beta))
+        alpha = max(alpha, min_value(state, alpha, beta, depth+1, depth_bound))
         state.undo_move()
         if alpha >= beta:
+            count_ab_cuts += 1
             return beta
     return alpha
 
 
-def min_value(state, alpha, beta):
-    global count
+def min_value(state, alpha, beta, depth, depth_bound):
+    global count, count_ab_cuts
     count += 1
-    if terminal_test(state):
+    if cutoff_test(state, depth, depth_bound):
         return evaluate(state)
     for a in actions(state):
         state.make_move(a)
-        beta = min(beta, max_value(state, alpha, beta))
+        beta = min(beta, max_value(state, alpha, beta, depth+1, depth_bound))
         state.undo_move()
         if beta <= alpha:
+            count_ab_cuts += 1
             return alpha
     return beta
 
+
+def ordered_actions(state):
+    evaluations = []
+    for action in actions(state):
+        state.make_move(action)
+        evaluations.append((evaluate(state), action))
+        state.undo_move()
+    if state.count_of_game_tokens_in_game() % 2 == 0:
+        evaluations = sorted(evaluations, reverse=True)
+    elif state.count_of_game_tokens_in_game() % 2 == 1:
+        evaluations = sorted(evaluations)
+    evaluations = [action[1] for action in evaluations]
+    return evaluations
 
 def iterative_deepening(state, depth_bound):
     return depth_search(state, 0, depth_bound)
@@ -62,9 +77,9 @@ def depth_search(state, current_depth, depth_bound):
         state.undo_move()
 
     if state.count_of_game_tokens_in_game() % 2 == 0:
-        evaluations = sorted(evaluations)
+        evaluations = sorted(evaluations, reverse=True)
     elif state.count_of_game_tokens_in_game() % 2 == 1:
-        evaluations = sorted(evaluations, reverse = True)
+        evaluations = sorted(evaluations)
 
     for a in evaluations:
         print a[0]
@@ -94,6 +109,17 @@ def player(state):
         return 'X'
     elif state.count_of_game_tokens_in_game() % 2 == 1:
         return 'O'
+
+
+def cutoff_test(state, depth, depth_bound):
+    if state.is_victory():
+        return True
+    elif not state.is_victory() and state.count_of_game_tokens_in_game() == state.get_maximal_amount_of_game_tokens():
+        return True
+    elif depth >= depth_bound:
+        return True
+    else:
+        return False
 
 
 def terminal_test(state):
@@ -161,4 +187,5 @@ time_before_funciton_call = time.time()
 print alpha_beta_iterative_deepening_search(state)
 print 'Time in milliseconds: ' + str(int((time.time() - time_before_funciton_call) * 1000))
 print count
+print count_ab_cuts
 

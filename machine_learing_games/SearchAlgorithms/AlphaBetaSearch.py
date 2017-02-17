@@ -3,6 +3,7 @@ import sys, time
 from numpy import argmax, argmin
 
 count = 1
+cutoffs = 0
 
 def alpha_beta_search(state=TicTacToe(4)):
     list_of_actions = actions(state)
@@ -19,7 +20,7 @@ def alpha_beta_search(state=TicTacToe(4)):
 
 
 def max_value(state, alpha, beta):
-    global count
+    global count, cutoffs
     count += 1
     if terminal_test(state):
         return utility(state)
@@ -28,12 +29,13 @@ def max_value(state, alpha, beta):
         alpha = max(alpha, min_value(state, alpha, beta))
         state.undo_move()
         if alpha >= beta:
+            cutoffs += 1
             return beta
     return alpha
 
 
 def min_value(state, alpha, beta):
-    global count
+    global count, cutoffs
     count += 1
     if terminal_test(state):
         return utility(state)
@@ -42,6 +44,7 @@ def min_value(state, alpha, beta):
         beta = min(beta, max_value(state, alpha, beta))
         state.undo_move()
         if beta <= alpha:
+            cutoffs += 1
             return alpha
     return beta
 
@@ -90,10 +93,17 @@ state = TicTacToe(4)
 #state = result(state, (1, 1))
 #state = result(result(state, (1, 1)), (0, 0))
 #state = result(result(result(state, (1, 1)), (0, 0)), (0, 1))
-state = result(result(result(result(result(result(state, (1, 1)), (0, 0)), (0, 1)), (2, 1)), (1, 2)), (2, 2))
+#state = result(result(result(result(result(result(state, (1, 1)), (0, 0)), (0, 1)), (2, 1)), (1, 2)), (2, 2))
+state.make_move((1, 1))
+state.make_move((2, 0))
+state.make_move((1, 0))
+state.make_move((2, 1))
+state.make_move((1, 2))
+state.make_move((2, 2))
 print state.printable_game_matrix()
 time_before_funciton_call = time.time()
 print alpha_beta_search(state)
 print 'Time in milliseconds: ' + str(int((time.time() - time_before_funciton_call) * 1000))
 print count
+print cutoffs
 
