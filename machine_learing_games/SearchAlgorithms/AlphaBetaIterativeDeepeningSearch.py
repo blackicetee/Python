@@ -143,6 +143,8 @@ def count_pure_connections(state, player_token):
             score += 0.1
         if value == 3:
             score += 0.3
+        if value == 4:
+            score += 2
     if player(state) == player_token:
         score += score * 2
     return score
