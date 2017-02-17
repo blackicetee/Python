@@ -7,7 +7,8 @@ def iterative_deepening(state, aim):
     while result is None or result != aim:
         result = depth_search(state, aim, 0, depth_bound)
         depth_bound += 1
-    return result
+    print state.printable_game_matrix()
+    return result, state.action_sequence
 
 
 def depth_search(state, aim, current_depth, depth_bound):
@@ -15,21 +16,17 @@ def depth_search(state, aim, current_depth, depth_bound):
         return utility(state)
     list_of_actions = actions(state)
     while len(list_of_actions) != 0 and current_depth < depth_bound:
-        result = depth_search(move(state, list_of_actions.pop()), aim, current_depth + 1, depth_bound)
+        state.make_move(list_of_actions.pop())
+        result = depth_search(state, aim, current_depth + 1, depth_bound)
         if result == aim:
             return result
+        else:
+            state.undo_move()
     return "no result found!"
 
 
 def actions(state):
     return state.get_possible_moves()
-
-
-def move(state, action):
-    copy_state = TicTacToe(4)
-    copy_state.initialize_game_matrix_with_another_game_matrix(state)
-    copy_state.make_move(action)
-    return copy_state
 
 
 def player(state):
@@ -57,5 +54,9 @@ def utility(state):
         return 0
 
 ttt = TicTacToe(4)
+ttt.make_move((1, 1))
+ttt.make_move((2, 1))
+ttt.make_move((2, 2))
+ttt.make_move((1, 2))
 print ttt.printable_game_matrix()
 print iterative_deepening(ttt, 1)
