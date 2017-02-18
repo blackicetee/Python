@@ -44,14 +44,14 @@ class TicTacToe:
 
     @property
     def game_matrix(self):
-        """A matrix which represents the TicTacToe game field. The game_matrix defines how big the game field is,
+        """A matrix which represents the TicTacToe game board. The game_matrix defines how big the game board is,
         how much game tokens could be placed and where they could be placed. Additionally the game_matrix
         stores the position of every placed game token inside the matrix.
 
         Returns
         -------
         numpy.matrix
-            The game_matrix.
+            The game matrix.
         """
         return self.__game_matrix
 
@@ -59,9 +59,8 @@ class TicTacToe:
     def action_sequence(self):
         """Is a list of tuples, where every tuple is an action. The list should work like a stack.
         An action is a valid placement of a player token on the game matrix.
-        If an action is selected and valid then the action should be stored inside the list.
-        The first action is on the "bottom" of the list and every time another action is performed,
-        it will be layered on top of the other actions.
+        The action sequence is like a representation of every move of one party and a party
+        is every move from the beginning until the end of a game.
 
         Returns
         -------
