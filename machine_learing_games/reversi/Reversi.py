@@ -71,13 +71,17 @@ class Reversi:
         return print_string
 
     def make_move(self, position):
-        possible_moves = self.get_all_possible_moves()
-        if position in possible_moves:
-            self.game_matrix[position] = self.get_player_to_move()
-            #self.__conquer_enemy_game_tokens(position)
-            return True
-        else:
-            return False
+        possible_moves = self.suggest_moves()
+        for possible_move in possible_moves:
+            if position == possible_move[0]:
+                self.game_matrix[position] = self.get_player_to_move()
+                self.conquer_tokens(position, possible_moves)
+
+    def conquer_tokens(self, choosen_position, possible_moves):
+        for move in possible_moves:
+            if move[0] == choosen_position:
+                for change_token in move[1]:
+                    self.game_matrix[change_token] = self.get_player_not_to_move()
 
     def count_game_tokens(self):
         count = 0
@@ -98,6 +102,138 @@ class Reversi:
             return 'W'
         elif self.count_game_tokens() % 2 == 1:
             return 'B'
+
+    def get_all_token_positions(self, token_type):
+        token_positions = []
+        for row in range(self.__dimension):
+            for col in range(self.__dimension):
+                if self.__game_matrix[row, col] == token_type:
+                    token_positions.append((row, col))
+        return token_positions
+
+    def suggest_moves(self):
+        return self.suggest_horizontal_moves() + self.suggest_vertical_moves() + self.suggest_diagonal_moves()
+
+    def suggest_horizontal_moves(self):
+        horizontal_moves = []
+        token_positions = self.get_all_token_positions(self.get_player_to_move())
+        for position in token_positions:
+            horizontal_move_right = self.suggest_horizontal_move_right(position)
+            horizontal_move_left = self.suggest_horizontal_move_left(position)
+            if horizontal_move_right is not None:
+                horizontal_moves.append(horizontal_move_right)
+            if horizontal_move_left is not None:
+                horizontal_moves.append(horizontal_move_left)
+        return horizontal_moves
+
+    def suggest_horizontal_move_right(self, position):
+        conquered_token_positions = []
+        for col in range(position[1] + 1, 8):
+            if self.__game_matrix[position[0], col] == self.get_player_not_to_move():
+                conquered_token_positions.append((position[0], col))
+            elif self.__game_matrix[position[0], col] == ' ':
+                if len(conquered_token_positions) > 0:
+                    return (position[0], col), conquered_token_positions
+                else:
+                    return None
+            elif self.__game_matrix[position[0], col] == self.get_player_to_move():
+                return None
+        return None
+
+    def suggest_horizontal_move_left(self, position):
+        conquered_token_positions = []
+        for col in reversed(range(position[1])):
+            if self.__game_matrix[position[0], col] == self.get_player_not_to_move():
+                conquered_token_positions.append((position[0], col))
+            elif self.__game_matrix[position[0], col] == ' ':
+                if len(conquered_token_positions) > 0:
+                    return (position[0], col), conquered_token_positions
+                else:
+                    return None
+            elif self.__game_matrix[position[0], col] == self.get_player_to_move():
+                return None
+        return None
+
+    def suggest_vertical_moves(self):
+        vertical_moves = []
+        token_positions = self.get_all_token_positions(self.get_player_to_move())
+        for position in token_positions:
+            vertical_move_right = self.suggest_vertical_move_bottom(position)
+            vertical_move_left = self.suggest_vertical_move_top(position)
+            if vertical_move_right is not None:
+                vertical_moves.append(vertical_move_right)
+            if vertical_move_left is not None:
+                vertical_moves.append(vertical_move_left)
+        return vertical_moves
+
+    def suggest_vertical_move_bottom(self, position):
+        conquered_token_positions = []
+        for row in range(position[0] + 1, 8):
+            if self.__game_matrix[row, position[1]] == self.get_player_not_to_move():
+                conquered_token_positions.append((row, position[1]))
+            elif self.__game_matrix[row, position[1]] == ' ':
+                if len(conquered_token_positions) > 0:
+                    return (row, position[1]), conquered_token_positions
+                else:
+                    return None
+            elif self.__game_matrix[row, position[1]] == self.get_player_to_move():
+                return None
+        return None
+
+    def suggest_vertical_move_top(self, position):
+        conquered_token_positions = []
+        for row in reversed(range(position[0])):
+            if self.__game_matrix[row, position[1]] == self.get_player_not_to_move():
+                conquered_token_positions.append((row, position[1]))
+            elif self.__game_matrix[row, position[1]] == ' ':
+                if len(conquered_token_positions) > 0:
+                    return (row, position[1]), conquered_token_positions
+                else:
+                    return None
+            elif self.__game_matrix[row, position[1]] == self.get_player_to_move():
+                return None
+        return None
+
+    def suggest_diagonal_moves(self):
+        diagonal_moves = []
+        token_positions = self.get_all_token_positions(self.get_player_to_move())
+        for position in token_positions:
+            diagonal_move_top_right = self.suggest_diagonal_move_top_right(position)
+            diagonal_move_top_left = self.suggest_diagonal_move_top_left(position)
+            if diagonal_move_top_right is not None:
+                diagonal_moves.append(diagonal_move_top_right)
+            if diagonal_move_top_left is not None:
+                diagonal_moves.append(diagonal_move_top_left)
+        return diagonal_moves
+
+    def suggest_diagonal_move_top_left(self, position):
+        conquered_token_positions = []
+        smaller_dimension = min(position[0], position[1])
+        for dimension in range(smaller_dimension):
+            if self.__game_matrix[(position[0] - 1) - dimension, (position[1] - 1) - dimension] == self.get_player_not_to_move():
+                conquered_token_positions.append(((position[0] - 1) - dimension, (position[1] - 1) - dimension))
+            elif self.__game_matrix[(position[0] - 1) - dimension, (position[1] - 1) - dimension] == ' ':
+                if len(conquered_token_positions) > 0:
+                    return ((position[0] - 1) - dimension, (position[1] - 1) - dimension), conquered_token_positions
+                else:
+                    return None
+            elif self.__game_matrix[(position[0] - 1) - dimension, (position[1] - 1) - dimension] == self.get_player_to_move():
+                return None
+        return None
+
+    def suggest_diagonal_move_top_right(self, position):
+        conquered_token_positions = []
+        for dimension in range(abs(position[0] - position[1])):
+            if self.__game_matrix[(position[0] - 1) - dimension, (position[1] + 1) + dimension] == self.get_player_not_to_move():
+                conquered_token_positions.append(((position[0] - 1) - dimension, (position[1] + 1) + dimension))
+            elif self.__game_matrix[(position[0] - 1) - dimension, (position[1] + 1) + dimension] == ' ':
+                if len(conquered_token_positions) > 0:
+                    return ((position[0] - 1) - dimension, (position[1] + 1) + dimension), conquered_token_positions
+                else:
+                    return None
+            elif self.__game_matrix[(position[0] - 1) - dimension, (position[1] + 1) + dimension] == self.get_player_to_move():
+                return None
+        return None
 
     def __conquer_enemy_game_tokens(self, game_token_position):
         self.__conquer_horizontal_enemy_tokens(game_token_position)
@@ -329,36 +465,6 @@ class Reversi:
                                         suggestion_diagonal_top_left + suggestion_diagonal_bottom_right + \
                                         suggestion_diagonal_top_right + suggestion_diagonal_bottom_left
         return all_suggestions_for_one_token
-
-    def suggest_horizontal_moves(self):
-        horizontal_moves = []
-        token_positions = self.get_all_token_positions(self.get_player_to_move())
-        for position in token_positions:
-            horizontal_move_right = self.suggest_horizontal_move_right(position)
-            if horizontal_move_right is not None:
-                horizontal_moves.append(horizontal_move_right)
-            #horizontal_moves.append(self.suggest_horizontal_move_left)
-        return horizontal_moves
-
-    def suggest_horizontal_move_right(self, position):
-        conquered_token_positions = []
-        for col in range(position[1] + 1, 8):
-            if self.__game_matrix[position[0], col] == self.get_player_not_to_move():
-                conquered_token_positions.append((position[0], col))
-            elif self.__game_matrix[position[0], col] == ' ':
-                return (position[0], col), conquered_token_positions
-            elif self.__game_matrix[position[0], col] == self.get_player_to_move():
-                return None
-        return None
-
-
-    def get_all_token_positions(self, token_type):
-        token_positions = []
-        for row in range(self.__dimension):
-            for col in range(self.__dimension):
-                if self.__game_matrix[row, col] == token_type:
-                    token_positions.append((row, col))
-        return token_positions
 
     def __suggest_horizontal_move(self, initial_token_position, token_position, is_left, is_conquered=False):
         """Suggests a possible horizontal token move to the left or to the right from an initial token position.
