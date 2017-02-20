@@ -200,14 +200,14 @@ class TestMakeMoves(unittest.TestCase):
         self.assertTrue((reversi.game_matrix == expected_game_matrix).all())
 
     def test_make_move_complex_4(self):
-        expected_game_matrix = np.matrix([[' ', ' ', 'B', ' ', 'B', ' ', ' ', 'B'],
-                                          [' ', ' ', 'W', 'W', 'W', 'W', 'B', ' '],
-                                          [' ', 'W', 'W', 'W', 'B', 'B', 'B', ' '],
-                                          ['W', 'W', 'W', 'B', 'B', 'B', 'B', 'B'],
-                                          [' ', ' ', 'B', 'W', 'W', 'W', 'B', ' '],
-                                          [' ', ' ', 'W', ' ', ' ', ' ', ' ', 'B'],
-                                          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                                          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']])
+        expected_game_matrix = np.matrix([['B', ' ', 'B', ' ', 'B', ' ', ' ', 'B'],
+                                          ['W', 'B', 'W', 'W', 'W', 'W', 'B', ' '],
+                                          ['W', 'W', 'B', 'W', 'B', 'W', 'B', ' '],
+                                          ['W', 'B', 'W', 'B', 'W', 'B', 'B', 'B'],
+                                          [' ', ' ', 'B', 'W', 'B', 'B', 'B', 'B'],
+                                          [' ', 'W', 'W', 'W', 'W', 'B', 'B', 'B'],
+                                          [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B'],
+                                          [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B']])
         reversi = Reversi()
         reversi.make_move((3, 5))
         reversi.make_move((2, 3))
@@ -240,8 +240,24 @@ class TestMakeMoves(unittest.TestCase):
         reversi.make_move((1, 2))
 
         reversi.make_move((0, 7))
-        # reversi.make_move((0, 0))
-        # reversi.make_move((0, 0))
-        # reversi.make_move((0, 0))
+        reversi.make_move((5, 1))
+        reversi.make_move((2, 0))
+        reversi.make_move((1, 1))
+
+        reversi.make_move((5, 3))
+        reversi.make_move((1, 0))
+        reversi.make_move((0, 0))
+        reversi.make_move((4, 7))
+
+        reversi.make_move((5, 6))
+        reversi.make_move((6, 7))
+        reversi.make_move((7, 7))
+        reversi.make_move((5, 4))
+
+        reversi.make_move((5, 5))
+        reversi.make_move((6, 7))
+        reversi.make_move((7, 7))
+        reversi.make_move((5, 4))
+
         print reversi.printable_game_matrix()
         self.assertTrue((reversi.game_matrix == expected_game_matrix).all())
