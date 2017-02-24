@@ -30,3 +30,6 @@ class TicTacToeZobrist:
             for col in range(tictactoe_game_matrix.shape[1]):
                 one_dimensional_list.append(tictactoe_game_matrix[row, col])
         return one_dimensional_list
+
+z = TicTacToeZobrist()
+print z.get_zobrist_board_position_array()
