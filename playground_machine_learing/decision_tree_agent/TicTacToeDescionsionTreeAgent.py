@@ -38,7 +38,7 @@ from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 #           Optimise the strategy for better game results.
 
 TICTACTOE_TRAINING_SET = os.path.join(ROOT_DIR, "tictactoe_training_sets\\tictactoe_training_set.txt")
-TICTACTOE_AGENT_EXPERIENCE = os.path.join(ROOT_DIR, "learning_agents\\tictactoe_agent_experience.txt")
+TICTACTOE_AGENT_EXPERIENCE = os.path.join(ROOT_DIR, "LearningAgents\\tictactoe_agent_experience.txt")
 
 class TicTacToeDecisionTreeAgent:
     def __init__(self):

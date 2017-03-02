@@ -1,8 +1,8 @@
 from random import randint
-import numpy as np
-from machine_learing_games.learning_agents.EasyTicTacToeAgent import EasyTicTacToeAgent
-from machine_learing_games.learning_agents.TicTacToeDescionsionTreeAgent import TicTacToeDecisionTreeAgent
+
+from machine_learing_games.Agents.LearningAgents.EasyTicTacToeAgent import EasyTicTacToeAgent
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
+from playground_machine_learing.decision_tree_agent.TicTacToeDescionsionTreeAgent import TicTacToeDecisionTreeAgent
 
 
 class TicTacToeEnvironment:

@@ -1,6 +1,6 @@
-from machine_learing_games.learning_agents.SQLiteTicTacToeAgentExperience import SQLiteTicTacToeAgentExperience
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 from machine_learing_games.tictactoe.TicTacToeZobrist import TicTacToeZobrist
+from playground_machine_learing.decision_tree_agent.SQLiteTicTacToeAgentExperience import SQLiteTicTacToeAgentExperience
 
 
 class EasyTicTacToeAgent:
