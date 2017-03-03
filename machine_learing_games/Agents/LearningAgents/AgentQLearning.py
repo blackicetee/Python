@@ -33,6 +33,11 @@ class AgentQLearning:
                 (ticTacToeStateHash, ticTacToeAction, ticTacToeActionValue))
         self.__ticTacToeDBConnection.commit()
 
+    def incrementTicTacToeStateActionPairFrequence(self, ticTacToeStateHash, ticTacToeAction):
+        pass
+
+    #def isTicTacToe
+
     def isTicTacToeStateActionInDB(self, ticTacToeStateHash, ticTacToeAction):
         self.__ticTacToeDBCursor.execute("SELECT * FROM Q WHERE ticTacToeStateHash = ? AND ticTacToeAction = ?", [ticTacToeStateHash, ticTacToeAction])
         if len(self.__ticTacToeDBCursor.fetchall()) == 0:
