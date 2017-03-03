@@ -21,10 +21,11 @@ class TicTacToeQLearningAgent:
     def suggestAction(self, state):
         pass
 
-    def qLearnIteration(self, sPrime, alpha, gamma):
+    #https://www.youtube.com/watch?v=1XRahNzA5bE
+    def qLearnIteration(self, sPrime, rPrime, alpha, gamma):
         if self.__s is not None:
             if self.isTerminal(self.__s):
-                self.insertActionValueInQ(self.__zobristHash.get_hash(self.__s.game_matrix), None, self.R(self.__s))
+                self.insertActionValueInQ(self.__zobristHash.get_hash(self.__s.game_matrix), None, rPrime)
             else:
                 self.incrementStateActionPairFrequenceInN(self.__s, self.__a)
                 self.insertActionValueInQ(self.__s, self.__a,
@@ -32,8 +33,8 @@ class TicTacToeQLearningAgent:
                                           + alpha * self.getStateActionPairFrequenceFromN(self.__s, self.__a)
                                           * (self.__r + gamma * self.maxActionValueForAllActionsInSPrime(sPrime) - self.getActionValueFromQ(self.__s, self.__a)))
         self.__s = sPrime
-        self.__a = self.argmaxActionWithMaxActionValueForAllActionsInSPrime(sPrime)
-        self.__r = self.R(sPrime)
+        self.__a = self.maxActionValueForAllActionsInSPrime(sPrime)
+        self.__r = rPrime
 
     def player(self, s):
         if s.count_of_game_tokens_in_game() % 2 == 0:
@@ -93,41 +94,18 @@ class TicTacToeQLearningAgent:
         if len(results) > 0:
             return results[0][0]
         else:
-            return None
+            self.insertActionValueInQ(ticTacToeStateHash, actionInState, 0)
+            return 0
 
-    def argmaxActionWithMaxActionValueForAllActionsInSPrime(self, sPrime=TicTacToe(4)):
-        maxActionValue = -999999
-        argmaxAction = None
-        allActionsInSPrime = sPrime.get_possible_moves()
-        for action in allActionsInSPrime:
-            sPrime.make_move(action)
-            if self.R(sPrime) > maxActionValue:
-                argmaxAction = action
-                maxActionValue = self.R(sPrime)
-            sPrime.undo_move()
-        return argmaxAction
-
-    def maxActionValueForAllActionsInSPrime(self, sPrime=TicTacToe(4)):
+    def maxActionValueForAllActionsInSPrime(self, sPrime):
         maxActionValue = -999999
         allActionsInSPrime = sPrime.get_possible_moves()
         for action in allActionsInSPrime:
             sPrime.make_move(action)
-            maxActionValue = max(maxActionValue, self.R(sPrime))
+            zobristHash = self.__zobristHash.get_hash(sPrime.game_matrix)
+            maxActionValue = max(maxActionValue, self.getActionValueFromQ(zobristHash, action))
             sPrime.undo_move()
         return maxActionValue
-
-    def insertAllPossibleActionsFromSPrimeInQ(self, sPrime=TicTacToe(4)):
-        """ """
-        # sPrime = s' = action a taken in state s
-        # s' = (s, a)
-        allPossibleActions = sPrime.get_possible_moves()
-        for action in allPossibleActions:
-            zobristHash = self.__zobristHash.get_hash(sPrime.game_matrix)
-            # we take an action in s' so sPrime will turn into sDoublePrime (s'')
-            sPrime.make_move(action)
-            sDoublePrime = sPrime
-            self.insertActionValueInQ(zobristHash, action, self.R(sDoublePrime))
-            sPrime.undo_move()
 
     def getMaxActionInStateFromQ(self, ticTacToeStateHash):
         self.__DBCursor.execute("SELECT * FROM Q WHERE ticTacToeStateHash = ?", [ticTacToeStateHash])
