@@ -1,10 +1,11 @@
+import sys
 from random import randint
+
+from numpy import argmax, argmin
 
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 from machine_learing_games.tictactoe.TicTacToeZobrist import TicTacToeZobrist
-from machine_learing_games.SQLite.SQLiteDB import SQLiteDB
-import sys, time
-from numpy import argmax, argmin
+from playground_machine_learing.PVS.SQLite import SQLiteDB
 
 count = 1
 

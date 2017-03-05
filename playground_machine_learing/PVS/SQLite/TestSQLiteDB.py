@@ -1,6 +1,6 @@
 import unittest
 
-from machine_learing_games.SQLite.SQLiteDB import SQLiteDB
+from playground_machine_learing.PVS.SQLite import SQLiteDB
 
 
 class TestInitializeDB(unittest.TestCase):

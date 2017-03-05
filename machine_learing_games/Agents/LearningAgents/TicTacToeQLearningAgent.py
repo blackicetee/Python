@@ -1,6 +1,6 @@
 import sqlite3
 from operator import itemgetter
-from machine_learing_games.Agents import AgentRandom
+from machine_learing_games.Agents import RandomAgent
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 from machine_learing_games.tictactoe.TicTacToeZobrist import TicTacToeZobrist
 
@@ -178,7 +178,7 @@ agent = TicTacToeQLearningAgent('ttt_db_1.db')
 # agent.insertActionValueInQ(123, (2, 0), -0.2)
 # print agent.getMaxActionInStateFromQ(123)
 for i in range(1000):
-    ttt = AgentRandom.getRandomNonTerminalTicTacToeState()
+    ttt = RandomAgent.getRandomNonTerminalTicTacToeState()
     # print ttt.printable_game_matrix()
     print agent.maxActionValueForAllActionsInSPrime(ttt)
 agent.closeDB()

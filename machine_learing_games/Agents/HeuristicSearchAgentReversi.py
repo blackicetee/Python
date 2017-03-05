@@ -1,9 +1,19 @@
-from machine_learing_games.tictactoe.TicTacToe import TicTacToe
-import sys, time
+from machine_learing_games.Agents import RandomAgent
+from machine_learing_games.reversi.Reversi import Reversi
+import sys
 from numpy import argmax, argmin
 
 count = 1
 count_ab_cuts = 0
+
+def suggestAction(state=Reversi()):
+    playerToMove = state.player_to_move()
+    list_of_action_utilities = []
+    action_list = actions(state)
+    for action in action_list:
+        state.make_move(action)
+        list_of_action_utilities.append(max_value(state, -sys.maxint, sys.maxint, 0, 3))
+        state.undo_move()
 
 def alpha_beta_iterative_deepening_search(state):
     list_of_action_utilities = []
@@ -12,11 +22,11 @@ def alpha_beta_iterative_deepening_search(state):
         state.make_move(action)
         list_of_action_utilities.append(max_value(state, -sys.maxint, sys.maxint, 0, 3))
         state.undo_move()
-    if player(state) == 'X':
-        best_action_index = argmax(list_of_action_utilities)
-    else:
-        best_action_index = argmin(list_of_action_utilities)
-    return action_list[best_action_index], list_of_action_utilities[best_action_index]
+    # if player(state) == 'X':
+    #     best_action_index = argmax(list_of_action_utilities)
+    # else:
+    #     best_action_index = argmin(list_of_action_utilities)
+    # return action_list[best_action_index], list_of_action_utilities[best_action_index]
 
 
 def max_value(state, alpha, beta, depth, depth_bound):
@@ -49,19 +59,11 @@ def min_value(state, alpha, beta, depth, depth_bound):
     return beta
 
 def actions(state):
-    return state.get_possible_moves()
-
-def player(state):
-    if state.count_of_game_tokens_in_game() % 2 == 0:
-        return 'X'
-    elif state.count_of_game_tokens_in_game() % 2 == 1:
-        return 'O'
-
+    playerToMove = state.player_to_move()
+    return state.suggest_moves(playerToMove)
 
 def cutoff_test(state, depth, depth_bound):
     if state.is_victory():
-        return True
-    elif not state.is_victory() and state.count_of_game_tokens_in_game() == state.get_maximal_amount_of_game_tokens():
         return True
     elif depth >= depth_bound:
         return True
@@ -71,8 +73,6 @@ def cutoff_test(state, depth, depth_bound):
 
 def terminal_test(state):
     if state.is_victory():
-        return True
-    elif not state.is_victory() and state.count_of_game_tokens_in_game() == state.get_maximal_amount_of_game_tokens():
         return True
     else:
         return False
@@ -84,6 +84,29 @@ def evaluate(state):
     score -= count_pure_connections(state, 'O')
     score += count_pure_connections(state, 'X')
     return score
+
+def mobility(state):
+    return current_mobility(state) + potential_mobility(state)
+
+def current_mobility(state):
+    player_to_move = state.player_to_move()
+    if player_to_move == 'B':
+        return len(state.suggest_moves('B')) * 0.01
+    elif player_to_move == 'W':
+        return len(state.suggest_moves('W')) * -0.01
+
+def potential_mobility(state):
+    player_to_move = state.player_to_move()
+    if player_to_move == 'B':
+        return len(state.suggest_moves('W')) * -0.01
+    elif player_to_move == 'W':
+        return len(state.suggest_moves('B')) * 0.01
+
+def edge_table(state):
+    pass
+
+def corder_ratio(state):
+    pass
 
 def early_positioning(state):
     score = 0
@@ -117,21 +140,16 @@ def count_pure_connections(state, player_token):
             score += 0.3
         if value == 4:
             score += 2
-    if player(state) == player_token:
-        score += score * 2
+    # if player(state) == player_token:
+    #     score += score * 2
     return score
 
-state = TicTacToe(4)
-state.make_move((1, 1))
-state.make_move((2, 0))
-state.make_move((1, 0))
-state.make_move((2, 1))
-state.make_move((1, 2))
-state.make_move((2, 2))
-print state.printable_game_matrix()
-time_before_funciton_call = time.time()
-print alpha_beta_iterative_deepening_search(state)
-print 'Time in milliseconds: ' + str(int((time.time() - time_before_funciton_call) * 1000))
-print count
-print count_ab_cuts
+reversi = Reversi()
+RandomAgent.makeRandomActionInReversiState(reversi)
+RandomAgent.makeRandomActionInReversiState(reversi)
+RandomAgent.makeRandomActionInReversiState(reversi)
+RandomAgent.makeRandomActionInReversiState(reversi)
 
+print reversi.printable_game_matrix()
+print reversi.player_to_move()
+print mobility(reversi)
