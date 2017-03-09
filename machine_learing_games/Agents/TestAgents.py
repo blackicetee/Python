@@ -33,8 +33,9 @@ class TestReversiHeuristic(unittest.TestCase):
         for testGameCount in range(1):
             reversi = Reversi()
             while not reversi.is_victory():
-                RandomAgent.processReversiAction(reversi)
-                if not reversi.is_victory():
+                if reversi.player_to_move() == 'B':
+                    RandomAgent.processReversiAction(reversi)
+                if reversi.player_to_move() == 'W' and not reversi.is_victory():
                     HeuristicSearchAgentReversi.processAction(reversi)
             print reversi.printable_game_matrix()
             print 'Black token count is: ' + str(reversi.count_all_black_tokens())

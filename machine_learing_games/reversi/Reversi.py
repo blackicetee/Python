@@ -50,6 +50,10 @@ class Reversi:
             from first performed action, to last performed action."""
         return self.__action_sequence
 
+    @property
+    def player_to_move(self):
+        return self.__player_to_move
+
     def printable_game_matrix(self):
         """Returns a good looking string representation of the game matrix property.
         This function is just for better human readability of the game matrix.
