@@ -13,25 +13,44 @@ class TDQLearningAgentTicTacToe:
         self.__s = None
         self.__a = None
         self.__r = None
+        self.__count_of_trained_games = 0
         self.__zobristHash = TicTacToeZobrist()
+        self.__zobristHash.set_zobrist_board_positoin_array(TicTacToeZobrist().getFixedTicTacToeZobristBoardPositionArray())
+
 
     def learnTictactoe(self, gamesToPlay):
-        pass
+        for gameCount in range(gamesToPlay):
+            ttt = TicTacToe(4)
+            while not ttt.is_terminal():
+                self.qLearnIteration(ttt, self.R(ttt), 0.9, 1)
+
+            if ttt.is_terminal():
+                self.qLearnIteration(ttt, self.R(ttt), 0.9, 1)
+
+
+            self.__s = None
+            self.__a = None
+            self.__r = None
 
     def suggestAction(self, state):
         pass
 
+    def exporationStrategyTicTacToe(self):
+        ttt = TicTacToe(4)
+        while not ttt.is_terminal():
+            pass
+
+
     #https://www.youtube.com/watch?v=1XRahNzA5bE
     def qLearnIteration(self, sPrime, rPrime, alpha, gamma):
+        if self.isTerminal(sPrime):
+            self.insertActionValueInQ(self.__zobristHash.get_hash(sPrime.game_matrix), None, rPrime)
         if self.__s is not None:
-            if self.isTerminal(self.__s):
-                self.insertActionValueInQ(self.__zobristHash.get_hash(self.__s.game_matrix), None, rPrime)
-            else:
-                self.incrementStateActionPairFrequenceInN(self.__s, self.__a)
-                self.insertActionValueInQ(self.__s, self.__a,
-                                          self.getActionValueFromQ(self.__s, self.__a)
-                                          + alpha * self.getStateActionPairFrequenceFromN(self.__s, self.__a)
-                                          * (self.__r + gamma * self.maxActionValueForAllActionsInSPrime(sPrime) - self.getActionValueFromQ(self.__s, self.__a)))
+            self.incrementStateActionPairFrequenceInN(self.__s, self.__a)
+            self.insertActionValueInQ(self.__s, self.__a,
+                                      self.getActionValueFromQ(self.__s, self.__a)
+                                      + alpha * self.getStateActionPairFrequenceFromN(self.__s, self.__a)
+                                      * (self.__r + gamma * self.maxActionValueForAllActionsInSPrime(sPrime) - self.getActionValueFromQ(self.__s, self.__a)))
         self.__s = sPrime
         self.__a = self.maxActionValueForAllActionsInSPrime(sPrime)
         self.__r = rPrime
@@ -50,7 +69,7 @@ class TDQLearningAgentTicTacToe:
         elif s.count_of_game_tokens_in_game() == s.get_maximal_amount_of_game_tokens() and not s.is_victory():
             return 0.2
         else:
-            return 0
+            return -0.04
 
     def U(self, s):
         return self.getMaxActionInStateFromQ(s)
@@ -89,7 +108,7 @@ class TDQLearningAgentTicTacToe:
     def getActionValueFromQ(self, ticTacToeStateHash, actionInState):
         self.__DBCursor.execute(
             "SELECT actionValue FROM Q WHERE ticTacToeStateHash = ? AND actionInState = ?",
-            [ticTacToeStateHash, actionInState])
+            [ticTacToeStateHash, str(actionInState)])
         results = self.__DBCursor.fetchall()
         if len(results) > 0:
             return results[0][0]
@@ -167,7 +186,7 @@ class TDQLearningAgentTicTacToe:
         self.__DBConnection.close()
 
 
-agent = TDQLearningAgentTicTacToe('ttt_db_1.db')
+agent = TDQLearningAgentTicTacToe('ttt_db_2.db')
 # agent.insertActionValueInQ(123, (0, 0), 0.0)
 # agent.insertActionValueInQ(123, (0, 1), 0.0)
 # agent.insertActionValueInQ(123, (0, 2), 0.2)
@@ -177,8 +196,10 @@ agent = TDQLearningAgentTicTacToe('ttt_db_1.db')
 # agent.insertActionValueInQ(123, (1, 3), 0.2)
 # agent.insertActionValueInQ(123, (2, 0), -0.2)
 # print agent.getMaxActionInStateFromQ(123)
-for i in range(1000):
-    ttt = RandomAgent.getRandomNonTerminalTicTacToeState()
-    print ttt.printable_game_matrix()
-    print agent.maxActionValueForAllActionsInSPrime(ttt)
+ttt = TicTacToe(4)
+agent.maxActionValueForAllActionsInSPrime(ttt)
+# for i in range(100):
+#     ttt = RandomAgent.getRandomNonTerminalTicTacToeState()
+#     print ttt.printable_game_matrix()
+#     print agent.maxActionValueForAllActionsInSPrime(ttt)
 agent.closeDB()

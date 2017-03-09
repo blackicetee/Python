@@ -30,7 +30,7 @@ class TestReversiHeuristic(unittest.TestCase):
     def test100GamesAgainstRandomAgentBlack(self):
         randomAgentWins = 0
         reversiHeuristicSearchAgentWins = 0
-        for testGameCount in range(1):
+        for testGameCount in range(5):
             reversi = Reversi()
             while not reversi.is_victory():
                 if reversi.player_to_move() == 'B':
