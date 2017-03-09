@@ -1,6 +1,5 @@
 from random import randint
 
-from machine_learing_games.Agents.LearningAgents.EasyTicTacToeAgent import EasyTicTacToeAgent
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 from playground_machine_learing.decision_tree_agent.TicTacToeDescionsionTreeAgent import TicTacToeDecisionTreeAgent
 
@@ -8,7 +7,6 @@ from playground_machine_learing.decision_tree_agent.TicTacToeDescionsionTreeAgen
 class TicTacToeEnvironment:
     def __init__(self):
         self.__tictactoe_desision_tree_agent = TicTacToeDecisionTreeAgent()
-        self.__easy_tictactoe_agent = EasyTicTacToeAgent()
         self.__tictactoe = TicTacToe(4)
         self.__round_count = 0
         self.__action_sequence = []
@@ -19,22 +17,6 @@ class TicTacToeEnvironment:
         self.__round_count = 0
         self.__action_sequence = []
         self.__game_result = ''
-
-    def train_easy_tictactoe_agent(self, times):
-        for game in range(0, times):
-            self.__initialize_new_tictactoe_game()
-            while self.__game_result == '' and self.__round_count < 16:
-                self.easy_agent_move()
-                self.random_agent_move()
-            self.__easy_tictactoe_agent.reward(self.__game_result)
-
-    def easy_agent_move(self):
-        if self.__game_result == '':
-            self.__round_count += 1
-            agent_move = self.__easy_tictactoe_agent.action()
-            self.__tictactoe.make_move(agent_move)
-            self.evaluate_game_result()
-
 
     def train_decision_tree_agent_x_times_against_random_agent(self, times):
         for game in range(0, times):
@@ -78,8 +60,3 @@ class TicTacToeEnvironment:
         random_agent_move = possible_actions[randint(0, (len(possible_actions) - 1))]
         self.__action_sequence.append(random_agent_move)
         return random_agent_move
-
-
-tictactoe_environment = TicTacToeEnvironment()
-#tictactoe_environment.train_decision_tree_agent_x_times_against_random_agent(20)
-tictactoe_environment.train_easy_tictactoe_agent(10)

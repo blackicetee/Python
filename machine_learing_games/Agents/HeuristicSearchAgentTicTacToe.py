@@ -5,12 +5,16 @@ from numpy import argmax, argmin
 count = 1
 count_ab_cuts = 0
 
+def processAction(ticTacToeState=TicTacToe(4)):
+    action = alpha_beta_iterative_deepening_search(ticTacToeState)
+    ticTacToeState.make_move(action[0])
+
 def alpha_beta_iterative_deepening_search(state):
     list_of_action_utilities = []
     action_list = actions(state)
     for action in action_list:
         state.make_move(action)
-        list_of_action_utilities.append(max_value(state, -sys.maxint, sys.maxint, 0, 3))
+        list_of_action_utilities.append(max_value(state, -sys.maxint, sys.maxint, 0, 2))
         state.undo_move()
     if player(state) == 'X':
         best_action_index = argmax(list_of_action_utilities)
@@ -48,58 +52,6 @@ def min_value(state, alpha, beta, depth, depth_bound):
             return alpha
     return beta
 
-
-def ordered_actions(state):
-    evaluations = []
-    for action in actions(state):
-        state.make_move(action)
-        evaluations.append((evaluate(state), action))
-        state.undo_move()
-    if state.count_of_game_tokens_in_game() % 2 == 0:
-        evaluations = sorted(evaluations, reverse=True)
-    elif state.count_of_game_tokens_in_game() % 2 == 1:
-        evaluations = sorted(evaluations)
-    evaluations = [action[1] for action in evaluations]
-    return evaluations
-
-def iterative_deepening(state, depth_bound):
-    return depth_search(state, 0, depth_bound)
-
-
-def depth_search(state, current_depth, depth_bound):
-    if terminal_test(state):
-        return evaluate(state)
-
-    evaluations = []
-    for action in actions(state):
-        state.make_move(action)
-        evaluations.append((evaluate(state), state, action))
-        state.undo_move()
-
-    if state.count_of_game_tokens_in_game() % 2 == 0:
-        evaluations = sorted(evaluations, reverse=True)
-    elif state.count_of_game_tokens_in_game() % 2 == 1:
-        evaluations = sorted(evaluations)
-
-    for a in evaluations:
-        print a[0]
-        a[1].make_move(a[2])
-        print a[1].printable_game_matrix()
-        a[1].undo_move()
-
-    return evaluations
-
-    # for sorted_action in evaluations:
-    #
-    # while len(list_of_actions) != 0 and current_depth < depth_bound:
-    #     state.make_move(list_of_actions.pop())
-    #     result = depth_search(state, current_depth + 1, depth_bound)
-    #     if result == aim:
-    #         return result
-    #     else:
-    #         state.undo_move()
-    # return "no result found!"
-
 def actions(state):
     return state.get_possible_moves()
 
@@ -109,7 +61,6 @@ def player(state):
         return 'X'
     elif state.count_of_game_tokens_in_game() % 2 == 1:
         return 'O'
-
 
 def cutoff_test(state, depth, depth_bound):
     if state.is_victory():
@@ -121,19 +72,8 @@ def cutoff_test(state, depth, depth_bound):
     else:
         return False
 
-
-def terminal_test(state):
-    if state.is_victory():
-        return True
-    elif not state.is_victory() and state.count_of_game_tokens_in_game() == state.get_maximal_amount_of_game_tokens():
-        return True
-    else:
-        return False
-
-
 def evaluate(state):
     score  = 0
-    level_coefficient = state.count_of_game_tokens_in_game()
     score += early_positioning(state)
     score -= count_pure_connections(state, 'O')
     score += count_pure_connections(state, 'X')
@@ -148,7 +88,6 @@ def early_positioning(state):
     elif len(x_midfields) == 2:
         score += state.count_tokens_in_pure_connection(x_midfields[0], x_midfields[1], 'X') * 0.1
     return score
-
 
 def count_pure_connections(state, player_token):
     score = 0
@@ -174,18 +113,3 @@ def count_pure_connections(state, player_token):
     if player(state) == player_token:
         score += score * 2
     return score
-
-state = TicTacToe(4)
-state.make_move((1, 1))
-state.make_move((2, 0))
-state.make_move((1, 0))
-state.make_move((2, 1))
-state.make_move((1, 2))
-state.make_move((2, 2))
-print state.printable_game_matrix()
-time_before_funciton_call = time.time()
-print alpha_beta_iterative_deepening_search(state)
-print 'Time in milliseconds: ' + str(int((time.time() - time_before_funciton_call) * 1000))
-print count
-print count_ab_cuts
-

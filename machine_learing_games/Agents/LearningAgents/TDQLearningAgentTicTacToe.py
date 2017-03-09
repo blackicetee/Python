@@ -5,7 +5,7 @@ from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 from machine_learing_games.tictactoe.TicTacToeZobrist import TicTacToeZobrist
 
 
-class TicTacToeQLearningAgent:
+class TDQLearningAgentTicTacToe:
     def __init__(self, TicTacToeDBName):
         self.__DBCursor = None
         self.__DBConnection = None
@@ -167,7 +167,7 @@ class TicTacToeQLearningAgent:
         self.__DBConnection.close()
 
 
-agent = TicTacToeQLearningAgent('ttt_db_1.db')
+agent = TDQLearningAgentTicTacToe('ttt_db_1.db')
 # agent.insertActionValueInQ(123, (0, 0), 0.0)
 # agent.insertActionValueInQ(123, (0, 1), 0.0)
 # agent.insertActionValueInQ(123, (0, 2), 0.2)
@@ -179,6 +179,6 @@ agent = TicTacToeQLearningAgent('ttt_db_1.db')
 # print agent.getMaxActionInStateFromQ(123)
 for i in range(1000):
     ttt = RandomAgent.getRandomNonTerminalTicTacToeState()
-    # print ttt.printable_game_matrix()
+    print ttt.printable_game_matrix()
     print agent.maxActionValueForAllActionsInSPrime(ttt)
 agent.closeDB()

@@ -1,6 +1,6 @@
 import numpy
 # TODO make this class a library of procedures - one procedure should return a random game situation
-# TODO Implements this file a production system for reversi game situations?
+# TODO Implements this file a production system for Reversi game situations?
 
 class Reversi:
     """Contains rules and logic of the board game Reversi.

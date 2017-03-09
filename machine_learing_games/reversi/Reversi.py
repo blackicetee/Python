@@ -1,6 +1,4 @@
 import numpy as np
-# TODO make this class a library of procedures - one procedure should return a random game situation
-# TODO Implements this file a production system for reversi game situations?
 
 class Reversi:
     """Contains rules and logic of the board game Reversi.
@@ -109,6 +107,47 @@ class Reversi:
             for col in range(self.__game_matrix.shape[1]):
                 if self.__game_matrix[row, col] != ' ':
                     count += 1
+        return count
+
+    def is_free_space_adjacent_to_token_position(self, token_position):
+        row = token_position[0]
+        col = token_position[1]
+        possible_adjacent_free_spaces = []
+        if row - 1 >= 0 and col - 1 >= 0:
+            possible_adjacent_free_spaces.append((row - 1, col - 1))
+        if row + 1 <= 7 and col + 1 <= 7:
+            possible_adjacent_free_spaces.append((row + 1, col + 1))
+        if row - 1 >= 0 and col + 1 <= 7:
+            possible_adjacent_free_spaces.append((row - 1, col + 1))
+        if row + 1 <= 7 and col - 1 >= 0:
+            possible_adjacent_free_spaces.append((row + 1, col - 1))
+        if col + 1 <= 7:
+            possible_adjacent_free_spaces.append((row, col + 1))
+        if col - 1 >= 0:
+            possible_adjacent_free_spaces.append((row, col - 1))
+        if row + 1 <= 7:
+            possible_adjacent_free_spaces.append((row + 1, col))
+        if row - 1 >= 0:
+            possible_adjacent_free_spaces.append((row - 1, col))
+        for position in possible_adjacent_free_spaces:
+            if self.game_matrix[position] == ' ':
+                return True
+        return False
+
+    def count_black_tokens_with_adjacent_free_space(self):
+        count = 0
+        black_tokens = self.get_all_token_positions('B')
+        for token in black_tokens:
+            if self.is_free_space_adjacent_to_token_position(token):
+                count += 1
+        return count
+
+    def count_white_tokens_with_adjacent_free_space(self):
+        count = 0
+        white_tokens = self.get_all_token_positions('W')
+        for token in white_tokens:
+            if self.is_free_space_adjacent_to_token_position(token):
+                count += 1
         return count
 
     def count_all_black_tokens(self):

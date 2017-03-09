@@ -284,6 +284,36 @@ class TicTacToe:
                     possible_moves.append((row, col))
         return possible_moves
 
+    def get_player_to_move(self):
+        """Returns the player token which needs to move.
+
+        Returns
+        -------
+        str
+            'X' if cross token needs to be set,
+            'O' if circle token needs to be set or
+            None if game state is already a terminal state."""
+        if not self.is_terminal():
+            if self.count_of_game_tokens_in_game() % 2 == 0:
+                return 'X'
+            elif self.count_of_game_tokens_in_game() % 2 == 1:
+                return 'O'
+        else:
+            return None
+
+    def get_player_which_moved_last(self):
+        """Returns the player token which moved last.
+
+        Returns
+        -------
+        str
+            'X' if cross token is moved last or
+            'O' if circle token is moved last."""
+        if self.count_of_game_tokens_in_game() % 2 == 0:
+            return 'O'
+        elif self.count_of_game_tokens_in_game() % 2 == 1:
+            return 'X'
+
     def __is_correct_game_token_type(self, game_token_type):
         """Checks the game token type of correctness.
 
@@ -448,3 +478,19 @@ class TicTacToe:
             from one type, is found.
             """
         return self.is_horizontal_victory() or self.is_vertical_victory() or self.is_diagonal_victory()
+
+    def is_terminal(self):
+        """Checks if Tic Tac Toe is finished (terminal) or not.
+
+         Returns
+         -------
+         bool
+            True if the game is finished,
+            False if not.
+            """
+        if self.is_victory():
+            return True
+        elif not self.is_victory() and self.count_of_game_tokens_in_game() == self.get_maximal_amount_of_game_tokens():
+            return True
+        else:
+            return False

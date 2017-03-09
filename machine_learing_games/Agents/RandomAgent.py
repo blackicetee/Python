@@ -1,12 +1,16 @@
 from random import randint
 
-from machine_learing_games.reversi.Reversi import Reversi
+from machine_learing_games.Reversi.Reversi import Reversi
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 
 
 def getRandomAction(possibleActionList):
     return possibleActionList[randint(0, (len(possibleActionList) - 1))]
 
+def processTicTacToeAction(ticTacToeState):
+    if not isTicTacToeStateTerminal(ticTacToeState):
+        randomTicTacToeAction = getRandomAction(ticTacToeState.get_possible_moves())
+        ticTacToeState.make_move(randomTicTacToeAction)
 
 def getRandomTerminalTicTacToeState():
     ttt = TicTacToe(4)
@@ -32,7 +36,7 @@ def isTicTacToeStateTerminal(ticTacToeState):
     else:
         return False
 
-def makeRandomActionInReversiState(reversiState=Reversi()):
+def processReversiAction(reversiState=Reversi()):
     if not reversiState.is_victory():
         randomReversiAction = getRandomAction(reversiState.suggest_moves(reversiState.player_to_move()))
         reversiState.make_move(randomReversiAction[0])
