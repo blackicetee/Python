@@ -31,7 +31,18 @@ class TicTacToeZobrist:
                 one_dimensional_list.append(tictactoe_game_matrix[row, col])
         return one_dimensional_list
 
-    def getFixedTicTacToeZobristBoardPositionArray(self):
+    def getFixed9FieldTicTacToeZobristBoardPositionArray(self):
+        return [[945187131, 648139399],
+                [717098135, 182172448],
+                [815387026, 923854592],
+                [187502661, 689921202],
+                [347529029, 550423936],
+                [703800998, 718138000],
+                [509475670, 322874787],
+                [139421107, 312807264],
+                [873091254, 304573307]]
+
+    def getFixed16FieldTicTacToeZobristBoardPositionArray(self):
         return [[945187131, 648139399],
                 [717098135, 182172448],
                 [815387026, 923854592],
