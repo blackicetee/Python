@@ -69,7 +69,7 @@ class TicTacToe:
             from first performed action, to last performed action."""
         return self.__action_sequence
 
-    def initialize_game_matrix_with_another_game_matrix(self, another_tictactoe_game):
+    def initialize_game_with_another_game(self, another_tictactoe_game):
         """Initializes the game matrix property with another game matrix.
         Careful this functio
 

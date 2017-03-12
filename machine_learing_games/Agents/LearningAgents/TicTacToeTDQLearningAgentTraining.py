@@ -6,7 +6,7 @@ TICTACTOE_TDQ_AGENT_10000_NAME = '3x3_ttt_tdq_agent_10000_.db'
 
 def trainAgentIn100Games():
     agent = TDQLearningAgentTicTacToe(TICTACTOE_TDQ_AGENT_100_NAME)
-    agent.learn3x3Tictactoe(100)
+    agent.learn3x3Tictactoe(5)
     agent.closeDB()
 
 def trainAgentIn1000Games():
