@@ -1,22 +1,36 @@
-from machine_learing_games.Agents.LearningAgents.TicTacToeTDQLearningAgent import TDQLearningAgentTicTacToe
+from machine_learing_games.Agents.LearningAgents.TicTacToeTDQLearningAgent import TicTacToeTDQLearningAgent, \
+    TICTACTOE_3x3_TDQ_AGENT_100_NAME, TICTACTOE_3x3_TDQ_AGENT_1000_NAME, TICTACTOE_3x3_TDQ_AGENT_10000_NAME, \
+    TICTACTOE_4x4_TDQ_AGENT_100_NAME, TICTACTOE_4x4_TDQ_AGENT_1000_NAME, TICTACTOE_4x4_TDQ_AGENT_10000_NAME
 
-TICTACTOE_TDQ_AGENT_100_NAME = '3x3_ttt_tdq_agent_100_.db'
-TICTACTOE_TDQ_AGENT_1000_NAME = '3x3_ttt_tdq_agent_1000_.db'
-TICTACTOE_TDQ_AGENT_10000_NAME = '3x3_ttt_tdq_agent_10000_.db'
 
-def trainAgentIn100Games():
-    agent = TDQLearningAgentTicTacToe(TICTACTOE_TDQ_AGENT_100_NAME)
-    agent.learn3x3Tictactoe(5)
+def train3x3TicTacToeAgentIn100Games():
+    agent = TicTacToeTDQLearningAgent(TICTACTOE_3x3_TDQ_AGENT_100_NAME, 3)
+    agent.learnTictactoe(100)
     agent.closeDB()
 
-def trainAgentIn1000Games():
-    agent = TDQLearningAgentTicTacToe(TICTACTOE_TDQ_AGENT_1000_NAME)
-    agent.learn3x3Tictactoe(1000)
+def train3x3TicTacToeAgentIn1000Games():
+    agent = TicTacToeTDQLearningAgent(TICTACTOE_3x3_TDQ_AGENT_1000_NAME, 3)
+    agent.learnTictactoe(1000)
     agent.closeDB()
 
-def trainAgentIn10000Games():
-    agent = TDQLearningAgentTicTacToe(TICTACTOE_TDQ_AGENT_10000_NAME)
-    agent.learn3x3Tictactoe(10000)
+def train3x3TicTacToeAgentIn10000Games():
+    agent = TicTacToeTDQLearningAgent(TICTACTOE_3x3_TDQ_AGENT_10000_NAME, 3)
+    agent.learnTictactoe(10000)
     agent.closeDB()
 
-trainAgentIn100Games()
+def train4x4TicTacToeAgentIn100Games():
+    agent = TicTacToeTDQLearningAgent(TICTACTOE_4x4_TDQ_AGENT_100_NAME, 4)
+    agent.learnTictactoe(100)
+    agent.closeDB()
+
+def train4x4TicTacToeAgentIn1000Games():
+    agent = TicTacToeTDQLearningAgent(TICTACTOE_4x4_TDQ_AGENT_1000_NAME, 4)
+    agent.learnTictactoe(1000)
+    agent.closeDB()
+
+def train4x4TicTacToeAgentIn10000Games():
+    agent = TicTacToeTDQLearningAgent(TICTACTOE_4x4_TDQ_AGENT_10000_NAME, 4)
+    agent.learnTictactoe(10000)
+    agent.closeDB()
+
+train3x3TicTacToeAgentIn10000Games()
