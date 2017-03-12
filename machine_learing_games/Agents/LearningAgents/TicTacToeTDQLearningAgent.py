@@ -2,8 +2,8 @@ import sqlite3
 from operator import itemgetter
 
 import logging
+from random import randint
 
-from machine_learing_games.Agents import RandomAgent
 from machine_learing_games.tictactoe.TicTacToe import TicTacToe
 from machine_learing_games.tictactoe.TicTacToeZobrist import TicTacToeZobrist
 
@@ -22,39 +22,52 @@ class TDQLearningAgentTicTacToe:
         self.__s = None
         self.__a = None
         self.__r = None
-        self.__count_of_trained_games = 0
+        self.__random_factor = 0
+        self.__count_random_actions = 0
+        self.__count_not_random_actions = 0
         self.__zobristHash = TicTacToeZobrist()
         self.__zobristHash.set_zobrist_board_positoin_array(TicTacToeZobrist().getFixed9FieldTicTacToeZobristBoardPositionArray())
 
+    def explorationStrategy(self, ticTacToeState):
+        actionWithMaxQValue = self.getMaxActionInStateFromQ(ticTacToeState)
+        depth = ticTacToeState.count_of_game_tokens_in_game()
+        if randint(0, self.__random_factor * depth) == randint(0, self.__random_factor * depth):
+            moves = ticTacToeState.get_possible_moves()
+            self.__count_random_actions += 1
+            return moves[randint(0, (len(moves) - 1))]
+        else:
+            self.__count_not_random_actions += 1
+            return actionWithMaxQValue
 
-    def learnTictactoe(self, gamesToPlay):
+    def learn3x3Tictactoe(self, gamesToPlay):
         for gameCount in range(gamesToPlay):
             ttt = TicTacToe(3)
             logging.info('Learning against itself game: ' + str(gameCount))
             while not ttt.is_terminal():
-                qAction = self.qLearnIteration(ttt, self.R(ttt), 0.1, 1)
+                suggestedAction = self.qLearnIteration(ttt, ttt.getReward(), 0.1, 1)
                 logging.info('\n' + ttt.printable_game_matrix())
                 logging.info(self.__zobristHash.get_hash(ttt.game_matrix))
-                logging.info(qAction)
-                ttt.make_move(qAction)
+                logging.info(suggestedAction)
+                ttt.make_move(suggestedAction)
+                print 'Count random actions: ' + str(self.__count_random_actions)
+                print 'Count not random actions: ' + str(self.__count_not_random_actions)
             if ttt.is_terminal():
-                self.qLearnIteration(ttt, self.R(ttt), 0.1, 1)
+                self.qLearnIteration(ttt, ttt.getReward(), 0.1, 1)
+                print 'Game Count: ' + str(gameCount)
+                print ttt.printable_game_matrix()
             self.__s = None
             self.__a = None
             self.__r = None
+            if gameCount % 50 == 0:
+                self.__random_factor += 1
 
     def suggestAction(self, state):
         return self.getMaxActionInStateFromQ(state)
 
-    def exporationStrategyTicTacToe(self):
-        ttt = TicTacToe(3)
-        while not ttt.is_terminal():
-            pass
-
     #https://www.youtube.com/watch?v=1XRahNzA5bE
     # with N Table
     def qLearnIteration(self, sPrime, rPrime, alpha, gamma):
-        if self.isTerminal(sPrime):
+        if sPrime.is_terminal():
             self.insertActionValueInQ(sPrime, None, rPrime)
             if self.__s is not None:
                 self.incrementStateActionPairFrequenceInN(self.__s, self.__a)
@@ -73,41 +86,14 @@ class TDQLearningAgentTicTacToe:
             else:
                 self.__s = TicTacToe(3)
             self.__s.initialize_game_matrix_with_another_game_matrix(sPrime)
-            self.__a = self.getMaxActionInStateFromQ(sPrime)
+            self.__a = self.explorationStrategy(sPrime)
             self.__r = rPrime
             return self.__a
-
-    def player(self, s):
-        if s.count_of_game_tokens_in_game() % 2 == 0:
-            return 'X'
-        elif s.count_of_game_tokens_in_game() % 2 == 1:
-            return 'O'
-
-    def R(self, s):
-        if self.player(s) == 'X' and s.is_victory():
-            return -1
-        elif self.player(s) != 'X' and s.is_victory():
-            return 1
-        elif s.count_of_game_tokens_in_game() == s.get_maximal_amount_of_game_tokens() and not s.is_victory():
-            return 0.2
-        else:
-            return -0.04
-
-    def U(self, s):
-        return self.getMaxActionInStateFromQ(s)
-
-    def isTerminal(self, s):
-        if s.is_victory():
-            return True
-        elif not s.is_victory() and s.count_of_game_tokens_in_game() == s.get_maximal_amount_of_game_tokens():
-            return True
-        else:
-            return False
-
 
             ###########################################################################
             ###                     AGENT EXPERIENCE FUNCTIONS                      ###
             ###########################################################################
+
 
     def createDB(self, TicTacToeDBName):
         self.__DBConnection = sqlite3.connect(TicTacToeDBName)
@@ -189,6 +175,22 @@ class TDQLearningAgentTicTacToe:
             return results[0][0]
         else:
             return None
+
+    def getLeastVisitedActionInStateFromN(self, ticTacToeState):
+        leastVisitedActionState = None
+        minVisits = 1000
+        possible_actions = ticTacToeState.get_possible_moves()
+        for action in possible_actions:
+            frequence = self.getStateActionPairFrequenceFromN(ticTacToeState, action)
+            if frequence is None:
+                frequence = 0
+            if frequence < minVisits:
+                minVisits = frequence
+                leastVisitedActionState = action
+        return leastVisitedActionState
+
+
+
 
     def isStateActionPairInN(self, ticTacToeStateHash, actionInState):
         self.__DBCursor.execute("SELECT * FROM N WHERE ticTacToeStateHash = ? AND actionInState = ?",

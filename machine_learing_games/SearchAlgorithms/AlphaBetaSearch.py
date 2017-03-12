@@ -106,4 +106,3 @@ print alpha_beta_search(state)
 print 'Time in milliseconds: ' + str(int((time.time() - time_before_funciton_call) * 1000))
 print count
 print cutoffs
-

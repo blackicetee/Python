@@ -494,3 +494,19 @@ class TicTacToe:
             return True
         else:
             return False
+
+    def getReward(self):
+        """Returns a numerical reward for reinforcement learning agents.
+
+        Returns
+        -------
+        float
+            The immediate reward in a current state."""
+        if self.is_terminal() and not self.is_victory():
+            return 0.02
+        elif self.is_terminal() and self.get_player_which_moved_last() == 'X':
+            return 1
+        elif self.is_terminal() and self.get_player_which_moved_last() == 'O':
+            return -1
+        else:
+            return -0.04
