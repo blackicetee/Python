@@ -76,8 +76,6 @@ class TicTacToeTDQLearningAgent:
             maxQEntry = min(listOfQEntries, key=itemgetter(2))
         return self.translateActionTupleString2IntTuple(str(maxQEntry[1]))
 
-    # https://www.youtube.com/watch?v=1XRahNzA5bE
-    # with N Table
     def qLearnIteration(self, sPrime, rPrime, alpha, gamma):
         if sPrime.is_terminal():
             self.insertActionValueInQ(sPrime, None, rPrime)
@@ -240,3 +238,37 @@ class TicTacToeTDQLearningAgent:
     def closeDB(self):
         self.__DBCursor.close()
         self.__DBConnection.close()
+
+        ###########################################################################
+        ###                     FIXED LEARNING FUNCTIONS                        ###
+        ###########################################################################
+
+    def train3x3TicTacToeAgentIn100Games(self):
+        agent = TicTacToeTDQLearningAgent(TICTACTOE_3x3_TDQ_AGENT_100_NAME, 3)
+        agent.learnTictactoe(100)
+        agent.closeDB()
+
+    def train3x3TicTacToeAgentIn1000Games(self):
+        agent = TicTacToeTDQLearningAgent(TICTACTOE_3x3_TDQ_AGENT_1000_NAME, 3)
+        agent.learnTictactoe(1000)
+        agent.closeDB()
+
+    def train3x3TicTacToeAgentIn10000Games(self):
+        agent = TicTacToeTDQLearningAgent(TICTACTOE_3x3_TDQ_AGENT_10000_NAME, 3)
+        agent.learnTictactoe(10000)
+        agent.closeDB()
+
+    def train4x4TicTacToeAgentIn100Games(self):
+        agent = TicTacToeTDQLearningAgent(TICTACTOE_4x4_TDQ_AGENT_100_NAME, 4)
+        agent.learnTictactoe(100)
+        agent.closeDB()
+
+    def train4x4TicTacToeAgentIn1000Games(self):
+        agent = TicTacToeTDQLearningAgent(TICTACTOE_4x4_TDQ_AGENT_1000_NAME, 4)
+        agent.learnTictactoe(1000)
+        agent.closeDB()
+
+    def train4x4TicTacToeAgentIn10000Games(self):
+        agent = TicTacToeTDQLearningAgent(TICTACTOE_4x4_TDQ_AGENT_10000_NAME, 4)
+        agent.learnTictactoe(10000)
+        agent.closeDB()

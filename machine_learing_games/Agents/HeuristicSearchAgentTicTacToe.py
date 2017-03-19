@@ -91,16 +91,28 @@ def early_positioning(state):
 
 def count_pure_connections(state, player_token):
     score = 0
-    victory_relevant_connections = {"h0": state.count_tokens_in_pure_connection((0, 0), (0, 1), player_token),
-                                    "h1": state.count_tokens_in_pure_connection((1, 0), (1, 1), player_token),
-                                    "h2": state.count_tokens_in_pure_connection((2, 0), (2, 1), player_token),
-                                    "h3": state.count_tokens_in_pure_connection((3, 0), (3, 1), player_token),
-                                    "v0": state.count_tokens_in_pure_connection((0, 0), (1, 0), player_token),
-                                    "v1": state.count_tokens_in_pure_connection((0, 1), (1, 1), player_token),
-                                    "v2": state.count_tokens_in_pure_connection((0, 2), (1, 2), player_token),
-                                    "v3": state.count_tokens_in_pure_connection((0, 3), (1, 3), player_token),
-                                    "d0": state.count_tokens_in_pure_connection((0, 0), (1, 1), player_token),
-                                    "d1": state.count_tokens_in_pure_connection((3, 0), (2, 1), player_token)}
+    if (state.get_maximal_amount_of_game_tokens() / 4) == 4:
+        victory_relevant_connections = {"h0": state.count_tokens_in_pure_connection((0, 0), (0, 1), player_token),
+                                        "h1": state.count_tokens_in_pure_connection((1, 0), (1, 1), player_token),
+                                        "h2": state.count_tokens_in_pure_connection((2, 0), (2, 1), player_token),
+                                        "h3": state.count_tokens_in_pure_connection((3, 0), (3, 1), player_token),
+                                        "v0": state.count_tokens_in_pure_connection((0, 0), (1, 0), player_token),
+                                        "v1": state.count_tokens_in_pure_connection((0, 1), (1, 1), player_token),
+                                        "v2": state.count_tokens_in_pure_connection((0, 2), (1, 2), player_token),
+                                        "v3": state.count_tokens_in_pure_connection((0, 3), (1, 3), player_token),
+                                        "d0": state.count_tokens_in_pure_connection((0, 0), (1, 1), player_token),
+                                        "d1": state.count_tokens_in_pure_connection((3, 0), (2, 1), player_token)}
+    elif (state.get_maximal_amount_of_game_tokens() / 3) == 3:
+        victory_relevant_connections = {"h0": state.count_tokens_in_pure_connection((0, 0), (0, 1), player_token),
+                                        "h1": state.count_tokens_in_pure_connection((1, 0), (1, 1), player_token),
+                                        "h2": state.count_tokens_in_pure_connection((2, 0), (2, 1), player_token),
+                                        "v0": state.count_tokens_in_pure_connection((0, 0), (1, 0), player_token),
+                                        "v1": state.count_tokens_in_pure_connection((0, 1), (1, 1), player_token),
+                                        "v2": state.count_tokens_in_pure_connection((0, 2), (1, 2), player_token),
+                                        "d0": state.count_tokens_in_pure_connection((0, 0), (1, 1), player_token),
+                                        "d1": state.count_tokens_in_pure_connection((2, 0), (1, 1), player_token)}
+    else:
+        victory_relevant_connections = []
     for value in victory_relevant_connections.itervalues():
         if value == 1:
             score += 0.01
